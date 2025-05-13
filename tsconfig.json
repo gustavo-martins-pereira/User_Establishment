@@ -6,9 +6,14 @@
         "paths": {
             "@aws/*": ["aws/*"],
             "@configs/*": ["configs/*"],
+            "@controllers/*": ["controllers/*"],
+            "@models/*": ["models/*"],
+            "@repositories/*": ["repositories/*"],
+            "@routes/*": ["routes/*"],
+            "@services/*": ["services/*"],
         },
         "allowImportingTsExtensions": true,
-        "noEmit": true
+        "noEmit": true,
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules"],

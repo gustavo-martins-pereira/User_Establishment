@@ -24,7 +24,7 @@ async function createUsersTable() {
                 ProvisionedThroughput: {
                     ReadCapacityUnits: 5,
                     WriteCapacityUnits: 5
-                }
+                },
             };
 
             try {
