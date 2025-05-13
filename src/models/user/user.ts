@@ -10,6 +10,8 @@ interface User {
     name: string;
     email: string;
     type: USER_TYPE;
+    createdAt: string;
+    updatedAt: string;
 };
 
 export {

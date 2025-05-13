@@ -30,7 +30,27 @@ const getUserIdValidator = [
         .isUUID().withMessage("The user ID must be a valid UUID")
 ];
 
+const putUpdateUserValidator = [
+    param("id")
+        .exists().withMessage("The user ID is required")
+        .isString().withMessage("The user ID must be a string")
+        .trim().notEmpty().withMessage("The user ID cannot be empty")
+        .isUUID().withMessage("The user ID must be a valid UUID"),
+    body("name")
+        .optional()
+        .isString().withMessage("The name must be a string")
+        .trim().notEmpty().withMessage("The name cannot be empty")
+        .escape(),
+    body("email")
+        .optional()
+        .isString().withMessage("The email must be a string")
+        .trim().notEmpty().withMessage("The email cannot be empty")
+        .isEmail().withMessage("The email must be valid")
+        .escape()
+];
+
 export {
     postCreateUserValidator,
     getUserIdValidator,
+    putUpdateUserValidator,
 };
