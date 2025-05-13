@@ -1,4 +1,4 @@
-import { GetCommand, GetCommandInput, PutCommand, PutCommandInput, UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, GetCommandInput, PutCommand, PutCommandInput, UpdateCommand, UpdateCommandInput, DeleteCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
 import { randomUUID, UUID } from "node:crypto";
 
 import { dynamoDBClient } from "@aws/dynamoDB/awsClient.ts";
@@ -7,12 +7,13 @@ import { CreateUserResponseDTO, GetUserByIdResponseDTO, UpdateUserResponseDTO } 
 
 const TABLE_NAME = "users";
 
-async function createDynamoDBUser(userData: CreateUserRequestDTO): Promise<CreateUserResponseDTO> {
+async function createDynamoDBUser(userData: CreateUserRequestDTO): Promise<CreateUserResponseDTO | null> {
+    const id = randomUUID();
     const now = new Date().toISOString();
     const params: PutCommandInput = {
         TableName: TABLE_NAME,
         Item: {
-            id: randomUUID(),
+            id,
             name: userData.name,
             email: userData.email,
             type: userData.type,
@@ -25,7 +26,9 @@ async function createDynamoDBUser(userData: CreateUserRequestDTO): Promise<Creat
         const command = new PutCommand(params);
         await dynamoDBClient.send(command);
 
-        return userData;
+        const user = await getDynamoDBUserById(id);
+
+        return user;
     } catch (error) {
         throw error;
     }
@@ -100,8 +103,25 @@ async function updateDynamoDBUser(id: UUID, updateUserData: UpdateUserRequestDTO
     }
 }
 
+async function deleteDynamoDBUser(id: UUID): Promise<void> {
+    const params: DeleteCommandInput = {
+        TableName: TABLE_NAME,
+        Key: {
+            id
+        }
+    };
+
+    try {
+        const command = new DeleteCommand(params);
+        await dynamoDBClient.send(command);
+    } catch (error) {
+        throw error;
+    }
+}
+
 export {
     createDynamoDBUser,
     getDynamoDBUserById,
     updateDynamoDBUser,
+    deleteDynamoDBUser,
 };

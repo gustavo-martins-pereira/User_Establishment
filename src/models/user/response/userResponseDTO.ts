@@ -1,6 +1,6 @@
 import { User } from "../user.ts";
 
-type CreateUserResponseDTO = Omit<User, "id" | "createdAt" | "updatedAt">;
+type CreateUserResponseDTO = User;
 type GetUserByIdResponseDTO = User;
 type UpdateUserResponseDTO = User;
 

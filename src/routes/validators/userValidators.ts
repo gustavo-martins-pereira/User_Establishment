@@ -49,8 +49,17 @@ const putUpdateUserValidator = [
         .escape()
 ];
 
+const deleteUserIdValidator = [
+    param("id")
+        .exists().withMessage("The user ID is required")
+        .isString().withMessage("The user ID must be a string")
+        .trim().notEmpty().withMessage("The user ID cannot be empty")
+        .isUUID().withMessage("The user ID must be a valid UUID")
+];
+
 export {
     postCreateUserValidator,
     getUserIdValidator,
     putUpdateUserValidator,
+    deleteUserIdValidator,
 };
