@@ -1,8 +1,17 @@
+import { Request, Response } from "express";
+import { validationResult } from "express-validator";
+
 import { CreateUserDTO } from "@models/user.ts";
 import { createUserUsecase } from "@services/user/createUserUsecase.ts";
-import { Request, Response } from "express";
 
-async function createUser(request: Request, response: Response): Promise<void> {
+async function createUser(request: Request, response: Response) {
+    const result = validationResult(request);
+
+    if(!result.isEmpty()) {
+        response.status(400).json({ errors: result.array() });
+        return;
+    }
+
     try {
         const userData: CreateUserDTO = request.body;
 
