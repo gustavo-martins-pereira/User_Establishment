@@ -2,12 +2,18 @@
     "name": "user-establishment",
     "version": "1.0.0",
     "description": "",
-    "main": "index.js",
+    "main": "src/server.ts",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "build": "rimraf dist && tsc && node dist/server.js"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
-    "type": "module"
+    "type": "module",
+    "devDependencies": {
+        "@tsconfig/node22": "^22.0.1",
+        "@types/node": "^22.15.17",
+        "rimraf": "^6.0.1",
+        "typescript": "^5.8.3"
+    }
 }
