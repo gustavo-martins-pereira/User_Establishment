@@ -1,9 +1,9 @@
-import { GetCommand, GetCommandInput, PutCommand, PutCommandInput, UpdateCommand, UpdateCommandInput, DeleteCommand, DeleteCommandInput } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, GetCommandInput, PutCommand, PutCommandInput, UpdateCommand, UpdateCommandInput, DeleteCommand, DeleteCommandInput, ScanCommandInput, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { randomUUID, UUID } from "node:crypto";
 
 import { dynamoDBClient } from "@aws/dynamoDB/awsClient.ts";
 import { CreateUserRequestDTO, UpdateUserRequestDTO } from "@models/user/request/userRequestDTO.ts";
-import { CreateUserResponseDTO, GetUserByIdResponseDTO, UpdateUserResponseDTO } from "@models/user/response/userResponseDTO.ts";
+import { CreateUserResponseDTO, GetAllUsersResponseDTO, GetUserByIdResponseDTO, UpdateUserResponseDTO } from "@models/user/response/userResponseDTO.ts";
 import { InternalServerError, NotFoundError } from "@utils/errors/AppError.ts";
 
 const TABLE_NAME = "users";
@@ -53,6 +53,25 @@ async function getDynamoDBUserById(id: UUID): Promise<GetUserByIdResponseDTO | n
         return response.Item as GetUserByIdResponseDTO;
     } catch (error) {
         throw new InternalServerError("Failed to fetch user from DynamoDB");
+    }
+}
+
+async function getDynamoDBAllUsers(): Promise<GetAllUsersResponseDTO> {
+    const params: ScanCommandInput = {
+        TableName: TABLE_NAME,
+    };
+
+    try {
+        const command = new ScanCommand(params);
+        const response = await dynamoDBClient.send(command);
+
+        if (!response.Items) {
+            return [];
+        }
+
+        return response.Items as GetUserByIdResponseDTO[];
+    } catch (error) {
+        throw new InternalServerError("Failed to fetch all users from DynamoDB");
     }
 }
 
@@ -117,6 +136,7 @@ async function deleteDynamoDBUser(id: UUID): Promise<void> {
 export {
     createDynamoDBUser,
     getDynamoDBUserById,
+    getDynamoDBAllUsers,
     updateDynamoDBUser,
     deleteDynamoDBUser
 };

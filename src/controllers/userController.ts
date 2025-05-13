@@ -8,6 +8,7 @@ import { updateUserUsecase } from "@services/user/updateUserUsecase.ts";
 import { deleteUserUsecase } from "@services/user/deleteUserUsecase.ts";
 import { CreateUserRequestDTO, UpdateUserRequestDTO } from "@models/user/request/userRequestDTO.ts";
 import { BadRequestError, NotFoundError } from "@utils/errors/AppError.ts";
+import { getAllUsersUsecase } from "@services/user/getAllUsersUsecase.ts";
 
 async function createUser(request: Request, response: Response, next: NextFunction) {
     try {
@@ -34,6 +35,16 @@ async function getUser(request: Request, response: Response, next: NextFunction)
         if (!user) throw new NotFoundError("User not found");
 
         response.status(200).json(user);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function getAllUsers(request: Request, response: Response, next: NextFunction) {
+    try {
+        const users = await getAllUsersUsecase();
+
+        response.status(200).json(users);
     } catch (error) {
         next(error);
     }
@@ -79,6 +90,7 @@ async function deleteUser(request: Request, response: Response, next: NextFuncti
 export {
     createUser,
     getUser,
+    getAllUsers,
     updateUser,
     deleteUser
 };
