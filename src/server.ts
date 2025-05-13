@@ -1,12 +1,7 @@
 import express from "express";
 import { errorHandler } from "@middlewares/errorHandler.ts";
 import "@configs/env.ts";
-import { createTables } from "@aws/dynamoDB/createTables.ts";
 import routes from "@routes/routes.ts";
-
-// AWS
-// DynamoDB
-createTables();
 
 // EXPRESS
 const app = express();
