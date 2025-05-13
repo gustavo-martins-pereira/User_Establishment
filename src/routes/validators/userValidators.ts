@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 
 import { USER_TYPE } from "@models/user/user.ts";
 
@@ -22,6 +22,15 @@ const postCreateUserValidator = [
         .isIn(Object.values(USER_TYPE)).withMessage(`The user type must be one of: [${Object.values(USER_TYPE).join(", ")}]`)
 ];
 
+const getUserIdValidator = [
+    param("id")
+        .exists().withMessage("The user ID is required")
+        .isString().withMessage("The user ID must be a string")
+        .trim().notEmpty().withMessage("The user ID cannot be empty")
+        .isUUID().withMessage("The user ID must be a valid UUID")
+];
+
 export {
     postCreateUserValidator,
+    getUserIdValidator,
 };
