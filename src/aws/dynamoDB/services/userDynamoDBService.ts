@@ -4,6 +4,7 @@ import { randomUUID, UUID } from "node:crypto";
 import { dynamoDBClient } from "@aws/dynamoDB/awsClient.ts";
 import { CreateUserRequestDTO, UpdateUserRequestDTO } from "@models/user/request/userRequestDTO.ts";
 import { CreateUserResponseDTO, GetUserByIdResponseDTO, UpdateUserResponseDTO } from "@models/user/response/userResponseDTO.ts";
+import { InternalServerError, NotFoundError } from "@utils/errors/AppError.ts";
 
 const TABLE_NAME = "users";
 
@@ -27,10 +28,9 @@ async function createDynamoDBUser(userData: CreateUserRequestDTO): Promise<Creat
         await dynamoDBClient.send(command);
 
         const user = await getDynamoDBUserById(id);
-
         return user;
     } catch (error) {
-        throw error;
+        throw new InternalServerError("Failed to create user in DynamoDB");
     }
 }
 
@@ -52,7 +52,7 @@ async function getDynamoDBUserById(id: UUID): Promise<GetUserByIdResponseDTO | n
 
         return response.Item as GetUserByIdResponseDTO;
     } catch (error) {
-        throw error;
+        throw new InternalServerError("Failed to fetch user from DynamoDB");
     }
 }
 
@@ -64,7 +64,7 @@ async function updateDynamoDBUser(id: UUID, updateUserData: UpdateUserRequestDTO
     Object.entries(updateUserData).forEach(([key, value]) => {
         updateExpressions.push(`#${key} = :${key}`);
         expressionAttributeNames[`#${key}`] = key;
-        expressionAttributeValues[`:${key}`] = { S: value };
+        expressionAttributeValues[`:${key}`] = value;
     });
 
     updateExpressions.push("#updatedAt = :updatedAt");
@@ -86,20 +86,15 @@ async function updateDynamoDBUser(id: UUID, updateUserData: UpdateUserRequestDTO
         const command = new UpdateCommand(params);
         const response = await dynamoDBClient.send(command);
 
-        if (!response.Attributes) {
-            return null;
+        if (!response.Attributes) throw new NotFoundError("User not found");
+
+        return response.Attributes as UpdateUserResponseDTO;
+    } catch (error) {
+        if (error instanceof NotFoundError) {
+            throw error;
         }
 
-        return {
-            id: response.Attributes.id,
-            name: response.Attributes.name.S,
-            email: response.Attributes.email.S,
-            type: response.Attributes.type,
-            createdAt: response.Attributes.createdAt,
-            updatedAt: response.Attributes.updatedAt,
-        };
-    } catch (error) {
-        throw error;
+        throw new InternalServerError("Failed to update user in DynamoDB");
     }
 }
 
@@ -115,7 +110,7 @@ async function deleteDynamoDBUser(id: UUID): Promise<void> {
         const command = new DeleteCommand(params);
         await dynamoDBClient.send(command);
     } catch (error) {
-        throw error;
+        throw new InternalServerError("Failed to delete user from DynamoDB");
     }
 }
 
@@ -123,5 +118,5 @@ export {
     createDynamoDBUser,
     getDynamoDBUserById,
     updateDynamoDBUser,
-    deleteDynamoDBUser,
+    deleteDynamoDBUser
 };
