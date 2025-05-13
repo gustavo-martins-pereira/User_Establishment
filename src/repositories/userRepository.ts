@@ -1,8 +1,9 @@
 import { createDynamoDBUser } from "@aws/dynamoDB/services/userDynamoDBService.ts";
-import { CreateUserDTO } from "@models/user.ts";
+import { CreateUserRequestDTO } from "@models/user/request/userRequestDTO.ts";
+import { CreateUserResponseDTO } from "@models/user/response/userResponseDTO.ts";
 
-async function createUser(userData: CreateUserDTO) {
-    await createDynamoDBUser(userData);
+async function createUser(userData: CreateUserRequestDTO): Promise<CreateUserResponseDTO> {
+    return await createDynamoDBUser(userData);
 };
 
 export {

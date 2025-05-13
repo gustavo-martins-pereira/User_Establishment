@@ -12,9 +12,7 @@ interface User {
     type: USER_TYPE;
 };
 
-type CreateUserDTO = Omit<User, "id">;
-
 export {
-    CreateUserDTO,
     USER_TYPE,
+    User,
 };

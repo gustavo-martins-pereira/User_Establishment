@@ -1,6 +1,6 @@
 import { body } from "express-validator";
 
-import { USER_TYPE } from "@models/user.ts";
+import { USER_TYPE } from "@models/user/user.ts";
 
 const postCreateUserValidator = [
     body("name")

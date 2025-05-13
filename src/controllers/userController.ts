@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 
-import { CreateUserDTO } from "@models/user.ts";
 import { createUserUsecase } from "@services/user/createUserUsecase.ts";
+import { CreateUserRequestDTO } from "@models/user/request/userRequestDTO.ts";
 
 async function createUser(request: Request, response: Response) {
     const result = validationResult(request);
@@ -13,11 +13,11 @@ async function createUser(request: Request, response: Response) {
     }
 
     try {
-        const userData: CreateUserDTO = request.body;
+        const userData: CreateUserRequestDTO = request.body;
 
-        await createUserUsecase(userData);
+        const user = await createUserUsecase(userData);
 
-        response.status(201).json(userData);
+        response.status(201).json(user);
     } catch (error) {
         response.status(500).send();
     }

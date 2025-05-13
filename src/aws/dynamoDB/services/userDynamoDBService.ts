@@ -2,9 +2,10 @@ import { PutItemCommand, PutItemCommandInput } from "@aws-sdk/client-dynamodb";
 import { randomUUID } from "node:crypto";
 
 import { dynamoDBClient } from "@aws/dynamoDB/awsClient.ts";
-import { CreateUserDTO } from "@models/user.ts";
+import { CreateUserRequestDTO } from "@models/user/request/userRequestDTO.ts";
+import { CreateUserResponseDTO } from "@models/user/response/userResponseDTO.ts";
 
-async function createDynamoDBUser({ name, email, type }: CreateUserDTO) {
+async function createDynamoDBUser({ name, email, type }: CreateUserRequestDTO): Promise<CreateUserResponseDTO> {
     const params: PutItemCommandInput = {
         TableName: "users",
         Item: {
@@ -19,9 +20,9 @@ async function createDynamoDBUser({ name, email, type }: CreateUserDTO) {
     try {
         const command = new PutItemCommand(params);
         await dynamoDBClient.send(command);
-        console.log("User created successfully");
+
+        return { name, email, type };
     } catch (error) {
-        console.error("Error creating user:", error);
         throw error;
     }
 }
