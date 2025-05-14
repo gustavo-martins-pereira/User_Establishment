@@ -2,7 +2,7 @@ import express from "express"
 
 import { createUser, getUserById, updateUser, deleteUser, getAllUsers } from "@controllers/userController.ts";
 import { postCreateUserValidator, getUserByIdValidator, putUpdateUserValidator, deleteUserIdValidator } from "./validators/userValidators.ts";
-import { createEstablishment, getEstablishmentById } from "@controllers/establishmentController.ts";
+import { createEstablishment, getAllEstablishments, getEstablishmentById } from "@controllers/establishmentController.ts";
 import { getEstablishmentByIdValidator, postCreateEstablishmentValidator } from "./validators/establishmentValidators.ts";
 
 const routes = express.Router();
@@ -17,5 +17,6 @@ routes.delete("/users/:id", deleteUserIdValidator, deleteUser);
 // ESTABLISHMENT
 routes.post("/establishments", postCreateEstablishmentValidator, createEstablishment);
 routes.get("/establishments/:id", getEstablishmentByIdValidator, getEstablishmentById);
+routes.get("/establishments", getAllEstablishments);
 
 export default routes;

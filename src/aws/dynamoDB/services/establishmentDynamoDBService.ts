@@ -1,9 +1,9 @@
-import { GetCommand, GetCommandInput, PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, GetCommandInput, PutCommand, PutCommandInput, ScanCommand, ScanCommandInput } from "@aws-sdk/lib-dynamodb";
 import { randomUUID, UUID } from "node:crypto";
 
 import { dynamoDBClient } from "@aws/dynamoDB/awsClient.ts";
 import { InternalServerError } from "@utils/errors/AppError.ts";
-import { CreateEstablishmentResponseDTO, GetEstablishmentByIdResponseDTO } from "@models/establishment/response/establishmentResponseDTO.ts";
+import { CreateEstablishmentResponseDTO, GetAllEstablishmentsResponseDTO, GetEstablishmentByIdResponseDTO } from "@models/establishment/response/establishmentResponseDTO.ts";
 import { CreateEstablishmentRequestDTO } from "@models/establishment/request/establishmentRequestDTO.ts";
 
 const TABLE_NAME = "establishments";
@@ -56,7 +56,27 @@ async function getDynamoDBEstablishmentById(id: UUID): Promise<GetEstablishmentB
     }
 }
 
+async function getDynamoDBAllEstablishments(): Promise<GetAllEstablishmentsResponseDTO> {
+    const params: ScanCommandInput = {
+        TableName: TABLE_NAME,
+    };
+
+    try {
+        const command = new ScanCommand(params);
+        const response = await dynamoDBClient.send(command);
+
+        if (!response.Items) {
+            return [];
+        }
+
+        return response.Items as GetAllEstablishmentsResponseDTO;
+    } catch (error) {
+        throw new InternalServerError("Failed to fetch all users from DynamoDB");
+    }
+}
+
 export {
     createDynamoDBEstablishment,
     getDynamoDBEstablishmentById,
+    getDynamoDBAllEstablishments,
 };

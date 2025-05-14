@@ -1,6 +1,6 @@
 import { UUID } from "node:crypto";
 
-import { createDynamoDBEstablishment, getDynamoDBEstablishmentById } from "@aws/dynamoDB/services/establishmentDynamoDBService.ts";
+import { createDynamoDBEstablishment, getDynamoDBAllEstablishments, getDynamoDBEstablishmentById } from "@aws/dynamoDB/services/establishmentDynamoDBService.ts";
 import { CreateEstablishmentRequestDTO } from "@models/establishment/request/establishmentRequestDTO.ts";
 import { GetEstablishmentByIdResponseDTO } from "@models/establishment/response/establishmentResponseDTO.ts";
 
@@ -12,7 +12,12 @@ async function getEstablishmentById(id: UUID): Promise<GetEstablishmentByIdRespo
     return await getDynamoDBEstablishmentById(id);
 }
 
+async function getAllEstablishments() {
+    return await getDynamoDBAllEstablishments();
+}
+
 export {
     createEstablishment,
     getEstablishmentById,
+    getAllEstablishments,
 };

@@ -6,6 +6,7 @@ import { CreateEstablishmentRequestDTO } from "@models/establishment/request/est
 import { createEstablishmentUsecase } from "@services/establishment/createEstablishmentUsecase.ts";
 import { BadRequestError, NotFoundError } from "@utils/errors/AppError.ts";
 import { getEstablishmentByIdUsecase } from "@services/establishment/getEstablishmentByIdUsecase.ts";
+import { getAllEstablishmentsUsecase } from "@services/establishment/getAllEstablishmentsUsecase.ts";
 
 async function createEstablishment(request: Request, response: Response, next: NextFunction) {
     try {
@@ -37,7 +38,18 @@ async function getEstablishmentById(request: Request, response: Response, next: 
     }
 }
 
+async function getAllEstablishments(request: Request, response: Response, next: NextFunction) {
+    try {
+        const establishments = await getAllEstablishmentsUsecase();
+
+        response.status(200).json(establishments);
+    } catch (error) {
+        next(error);
+    }
+}
+
 export {
     createEstablishment,
     getEstablishmentById,
+    getAllEstablishments,
 };
