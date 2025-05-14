@@ -32,7 +32,7 @@ async function getUserById(request: Request, response: Response, next: NextFunct
         const { id } = request.params;
         const user = await getUserByIdUsecase(id as UUID);
 
-        if (!user) throw new NotFoundError("User not found");
+        if(!user) throw new NotFoundError("User not found");
 
         response.status(200).json(user);
     } catch (error) {
@@ -59,7 +59,7 @@ async function updateUserById(request: Request, response: Response, next: NextFu
         const userData: UpdateUserRequestDTO = request.body;
 
         const isUserExists = await getUserByIdUsecase(id as UUID);
-        if (!isUserExists) throw new NotFoundError("User not found");
+        if(!isUserExists) throw new NotFoundError("User not found");
 
         const user = await updateUserByIdUsecase(id as UUID, userData);
 
@@ -77,7 +77,7 @@ async function deleteUserById(request: Request, response: Response, next: NextFu
         const { id } = request.params;
         const isUserExists = await getUserByIdUsecase(id as UUID);
         
-        if (!isUserExists) throw new NotFoundError("User not found");
+        if(!isUserExists) throw new NotFoundError("User not found");
 
         await deleteUserByIdUsecase(id as UUID);
 

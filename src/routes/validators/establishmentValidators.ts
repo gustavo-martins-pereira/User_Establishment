@@ -41,6 +41,18 @@ const putUpdateEstablishmentValidator = [
         .isString().withMessage("The name must be a string")
         .trim().notEmpty().withMessage("The name cannot be empty")
         .escape(),
+    body("ownerId")
+        .optional()
+        .isString().withMessage("The owner id must be a string")
+        .trim().notEmpty().withMessage("The owner id cannot be empty")
+        .isUUID().withMessage("The owner id must be a valid UUID")
+        .escape(),
+    body("type")
+        .optional()
+        .isString().withMessage("The establishment type must be a string")
+        .trim().notEmpty().withMessage("The establishment type cannot be empty")
+        .toUpperCase()
+        .isIn(Object.values(ESTABLISHMENT_TYPE)).withMessage(`The establishment type must be one of: [${Object.values(ESTABLISHMENT_TYPE).join(", ")}]`)
 ];
 
 const deleteEstablishmentByIdValidator = [

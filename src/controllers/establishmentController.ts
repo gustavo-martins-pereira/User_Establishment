@@ -9,6 +9,7 @@ import { getEstablishmentByIdUsecase } from "@services/establishment/getEstablis
 import { getAllEstablishmentsUsecase } from "@services/establishment/getAllEstablishmentsUsecase.ts";
 import { updateEstablishmentByIdUsecase } from "@services/establishment/updateEstablishmentByIdUsecase.ts";
 import { deleteEstablishmentByIdUsecase } from "@services/establishment/deleteEstablishmentByIdUsecase.ts";
+import { getUserByIdUsecase } from "@services/user/getUserByIdUsecase.ts";
 
 async function createEstablishment(request: Request, response: Response, next: NextFunction) {
     try {
@@ -32,7 +33,7 @@ async function getEstablishmentById(request: Request, response: Response, next: 
         const { id } = request.params;
         const establishment = await getEstablishmentByIdUsecase(id as UUID);
 
-        if (!establishment) throw new NotFoundError("Establishment not found");
+        if(!establishment) throw new NotFoundError("Establishment not found");
 
         response.status(200).json(establishment);
     } catch (error) {
@@ -59,7 +60,10 @@ async function updateEstablishmentById(request: Request, response: Response, nex
         const establishmentData: UpdateEstablishmentByIdRequestDTO = request.body;
 
         const isEstablishmentExists = await getEstablishmentByIdUsecase(id as UUID);
-        if (!isEstablishmentExists) throw new NotFoundError("Establishment not found");
+        if(!isEstablishmentExists) throw new NotFoundError("Establishment not found");
+
+        const isOwnerExists = await getUserByIdUsecase(establishmentData.ownerId as UUID);
+        if(!isOwnerExists) throw new NotFoundError("Owner id not found");
 
         const establishment = await updateEstablishmentByIdUsecase(id as UUID, establishmentData);
 
@@ -77,7 +81,7 @@ async function deleteEstablishmentById(request: Request, response: Response, nex
         const { id } = request.params;
         const isEstablishmentExists = await getEstablishmentByIdUsecase(id as UUID);
         
-        if (!isEstablishmentExists) throw new NotFoundError("Establishment not found");
+        if(!isEstablishmentExists) throw new NotFoundError("Establishment not found");
 
         await deleteEstablishmentByIdUsecase(id as UUID);
 

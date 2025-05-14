@@ -46,7 +46,13 @@ const putUpdateUserValidator = [
         .isString().withMessage("The email must be a string")
         .trim().notEmpty().withMessage("The email cannot be empty")
         .isEmail().withMessage("The email must be valid")
-        .escape()
+        .escape(),
+    body("type")
+        .optional()
+        .isString().withMessage("The user type must be a string")
+        .trim().notEmpty().withMessage("The user type cannot be empty")
+        .toUpperCase()
+        .isIn(Object.values(USER_TYPE)).withMessage(`The user type must be one of: [${Object.values(USER_TYPE).join(", ")}]`)
 ];
 
 const deleteUserByIdValidator = [
