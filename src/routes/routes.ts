@@ -4,6 +4,8 @@ import { createUser, getUserById, updateUserById, deleteUserById, getAllUsers } 
 import { postCreateUserValidator, getUserByIdValidator, putUpdateUserValidator, deleteUserByIdValidator } from "./validators/userValidators.ts";
 import { createEstablishment, deleteEstablishmentById, getAllEstablishments, getEstablishmentById, getEstablishmentsByType, updateEstablishmentById } from "@controllers/establishmentController.ts";
 import { deleteEstablishmentByIdValidator, getEstablishmentByIdValidator, getEstablishmentsByTypeValidator, postCreateEstablishmentValidator, putUpdateEstablishmentValidator } from "./validators/establishmentValidators.ts";
+import { postCreateProductValidator } from "./validators/productValidators.ts";
+import { createProduct } from "@controllers/productController.ts";
 
 const routes = express.Router();
 
@@ -21,5 +23,8 @@ routes.get("/establishments/type/:type", getEstablishmentsByTypeValidator, getEs
 routes.get("/establishments", getAllEstablishments);
 routes.put("/establishments/:id", putUpdateEstablishmentValidator, updateEstablishmentById);
 routes.delete("/establishments/:id", deleteEstablishmentByIdValidator, deleteEstablishmentById);
+
+// PRODUCT
+routes.post("/products", postCreateProductValidator, createProduct);
 
 export default routes;
