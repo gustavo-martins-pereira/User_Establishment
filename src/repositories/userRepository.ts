@@ -1,8 +1,8 @@
 import { UUID } from "node:crypto";
 
-import { createDynamoDBUser, getDynamoDBUserById, updateDynamoDBUser, deleteDynamoDBUser, getDynamoDBAllUsers } from "@aws/dynamoDB/services/userDynamoDBService.ts";
+import { createDynamoDBUser, getDynamoDBUserById, updateDynamoDBUserById, deleteDynamoDBUser, getDynamoDBAllUsers } from "@aws/dynamoDB/services/userDynamoDBService.ts";
 import { CreateUserRequestDTO, UpdateUserRequestDTO } from "@models/user/request/userRequestDTO.ts";
-import { CreateUserResponseDTO, GetAllUsersResponseDTO, GetUserByIdResponseDTO, UpdateUserResponseDTO } from "@models/user/response/userResponseDTO.ts";
+import { CreateUserResponseDTO, GetAllUsersResponseDTO, GetUserByIdResponseDTO, UpdateUserByIdResponseDTO } from "@models/user/response/userResponseDTO.ts";
 
 async function createUser(userData: CreateUserRequestDTO): Promise<CreateUserResponseDTO | null> {
     return await createDynamoDBUser(userData);
@@ -16,8 +16,8 @@ async function getAllUsers(): Promise<GetAllUsersResponseDTO> {
     return await getDynamoDBAllUsers();
 }
 
-async function updateUser(id: UUID, userData: UpdateUserRequestDTO): Promise<UpdateUserResponseDTO | null> {
-    return await updateDynamoDBUser(id, userData);
+async function updateUserById(id: UUID, userData: UpdateUserRequestDTO): Promise<UpdateUserByIdResponseDTO | null> {
+    return await updateDynamoDBUserById(id, userData);
 }
 
 async function deleteUser(id: UUID): Promise<void> {
@@ -28,6 +28,6 @@ export {
     createUser,
     getUserById,
     getAllUsers,
-    updateUser,
+    updateUserById,
     deleteUser,
 };

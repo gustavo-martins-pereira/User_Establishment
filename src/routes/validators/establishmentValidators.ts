@@ -30,7 +30,21 @@ const getEstablishmentByIdValidator = [
         .isUUID().withMessage("The establishment ID must be a valid UUID")
 ];
 
+const putUpdateEstablishmentValidator = [
+    param("id")
+        .exists().withMessage("The establishment ID is required")
+        .isString().withMessage("The establishment ID must be a string")
+        .trim().notEmpty().withMessage("The establishment ID cannot be empty")
+        .isUUID().withMessage("The establishment ID must be a valid UUID"),
+    body("name")
+        .optional()
+        .isString().withMessage("The name must be a string")
+        .trim().notEmpty().withMessage("The name cannot be empty")
+        .escape(),
+];
+
 export {
     postCreateEstablishmentValidator,
     getEstablishmentByIdValidator,
+    putUpdateEstablishmentValidator,
 };

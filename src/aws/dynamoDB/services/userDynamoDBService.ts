@@ -3,7 +3,7 @@ import { randomUUID, UUID } from "node:crypto";
 
 import { dynamoDBClient } from "@aws/dynamoDB/awsClient.ts";
 import { CreateUserRequestDTO, UpdateUserRequestDTO } from "@models/user/request/userRequestDTO.ts";
-import { CreateUserResponseDTO, GetAllUsersResponseDTO, GetUserByIdResponseDTO, UpdateUserResponseDTO } from "@models/user/response/userResponseDTO.ts";
+import { CreateUserResponseDTO, GetAllUsersResponseDTO, GetUserByIdResponseDTO, UpdateUserByIdResponseDTO } from "@models/user/response/userResponseDTO.ts";
 import { InternalServerError, NotFoundError } from "@utils/errors/AppError.ts";
 
 const TABLE_NAME = "users";
@@ -75,7 +75,7 @@ async function getDynamoDBAllUsers(): Promise<GetAllUsersResponseDTO> {
     }
 }
 
-async function updateDynamoDBUser(id: UUID, updateUserData: UpdateUserRequestDTO): Promise<UpdateUserResponseDTO | null> {
+async function updateDynamoDBUserById(id: UUID, updateUserData: UpdateUserRequestDTO): Promise<UpdateUserByIdResponseDTO> {
     const updateExpressions: string[] = [];
     const expressionAttributeNames: Record<string, string> = {};
     const expressionAttributeValues: Record<string, any> = {};
@@ -107,7 +107,7 @@ async function updateDynamoDBUser(id: UUID, updateUserData: UpdateUserRequestDTO
 
         if (!response.Attributes) throw new NotFoundError("User not found");
 
-        return response.Attributes as UpdateUserResponseDTO;
+        return response.Attributes as UpdateUserByIdResponseDTO;
     } catch (error) {
         if (error instanceof NotFoundError) {
             throw error;
@@ -137,6 +137,6 @@ export {
     createDynamoDBUser,
     getDynamoDBUserById,
     getDynamoDBAllUsers,
-    updateDynamoDBUser,
+    updateDynamoDBUserById,
     deleteDynamoDBUser
 };

@@ -1,10 +1,10 @@
-import { GetCommand, GetCommandInput, PutCommand, PutCommandInput, ScanCommand, ScanCommandInput } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, GetCommandInput, PutCommand, PutCommandInput, ScanCommand, ScanCommandInput, UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { randomUUID, UUID } from "node:crypto";
 
 import { dynamoDBClient } from "@aws/dynamoDB/awsClient.ts";
-import { InternalServerError } from "@utils/errors/AppError.ts";
-import { CreateEstablishmentResponseDTO, GetAllEstablishmentsResponseDTO, GetEstablishmentByIdResponseDTO } from "@models/establishment/response/establishmentResponseDTO.ts";
-import { CreateEstablishmentRequestDTO } from "@models/establishment/request/establishmentRequestDTO.ts";
+import { InternalServerError, NotFoundError } from "@utils/errors/AppError.ts";
+import { CreateEstablishmentResponseDTO, GetAllEstablishmentsResponseDTO, GetEstablishmentByIdResponseDTO, UpdateEstablishmentByIdResponseDTO } from "@models/establishment/response/establishmentResponseDTO.ts";
+import { CreateEstablishmentRequestDTO, UpdateEstablishmentByIdRequestDTO } from "@models/establishment/request/establishmentRequestDTO.ts";
 
 const TABLE_NAME = "establishments";
 
@@ -75,8 +75,51 @@ async function getDynamoDBAllEstablishments(): Promise<GetAllEstablishmentsRespo
     }
 }
 
+async function updateDynamoDBEstablishmentById(id: UUID, updateEstablishmentData: UpdateEstablishmentByIdRequestDTO): Promise<UpdateEstablishmentByIdResponseDTO> {
+    const updateExpressions: string[] = [];
+    const expressionAttributeNames: Record<string, string> = {};
+    const expressionAttributeValues: Record<string, any> = {};
+
+    Object.entries(updateEstablishmentData).forEach(([key, value]) => {
+        updateExpressions.push(`#${key} = :${key}`);
+        expressionAttributeNames[`#${key}`] = key;
+        expressionAttributeValues[`:${key}`] = value;
+    });
+
+    updateExpressions.push("#updatedAt = :updatedAt");
+    expressionAttributeNames["#updatedAt"] = "updatedAt";
+    expressionAttributeValues[":updatedAt"] = new Date().toISOString();
+
+    const params: UpdateCommandInput = {
+        TableName: TABLE_NAME,
+        Key: {
+            id
+        },
+        UpdateExpression: `SET ${updateExpressions.join(", ")}`,
+        ExpressionAttributeNames: expressionAttributeNames,
+        ExpressionAttributeValues: expressionAttributeValues,
+        ReturnValues: "ALL_NEW",
+    };
+
+    try {
+        const command = new UpdateCommand(params);
+        const response = await dynamoDBClient.send(command);
+
+        if (!response.Attributes) throw new NotFoundError("Establishment not found");
+
+        return response.Attributes as UpdateEstablishmentByIdResponseDTO;
+    } catch (error) {
+        if (error instanceof NotFoundError) {
+            throw error;
+        }
+
+        throw new InternalServerError("Failed to update Establishment in DynamoDB");
+    }
+}
+
 export {
     createDynamoDBEstablishment,
     getDynamoDBEstablishmentById,
     getDynamoDBAllEstablishments,
+    updateDynamoDBEstablishmentById,
 };

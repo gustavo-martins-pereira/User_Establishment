@@ -4,7 +4,7 @@ import { UUID } from "node:crypto";
 
 import { createUserUsecase } from "@services/user/createUserUsecase.ts";
 import { getUserByIdUsecase } from "@services/user/getUserByIdUsecase.ts";
-import { updateUserUsecase } from "@services/user/updateUserUsecase.ts";
+import { updateUserByIdUsecase } from "@services/user/updateUserByIdUsecase.ts";
 import { deleteUserUsecase } from "@services/user/deleteUserUsecase.ts";
 import { CreateUserRequestDTO, UpdateUserRequestDTO } from "@models/user/request/userRequestDTO.ts";
 import { BadRequestError, NotFoundError } from "@utils/errors/AppError.ts";
@@ -50,7 +50,7 @@ async function getAllUsers(request: Request, response: Response, next: NextFunct
     }
 }
 
-async function updateUser(request: Request, response: Response, next: NextFunction) {
+async function updateUserById(request: Request, response: Response, next: NextFunction) {
     try {
         const result = validationResult(request);
         if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
@@ -61,7 +61,7 @@ async function updateUser(request: Request, response: Response, next: NextFuncti
         const isUserExists = await getUserByIdUsecase(id as UUID);
         if (!isUserExists) throw new NotFoundError("User not found");
 
-        const user = await updateUserUsecase(id as UUID, userData);
+        const user = await updateUserByIdUsecase(id as UUID, userData);
 
         response.status(200).json(user);
     } catch (error) {
@@ -91,6 +91,6 @@ export {
     createUser,
     getUserById,
     getAllUsers,
-    updateUser,
+    updateUserById,
     deleteUser
 };
