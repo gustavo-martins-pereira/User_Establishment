@@ -10,6 +10,8 @@ import { getAllEstablishmentsUsecase } from "@services/establishment/getAllEstab
 import { updateEstablishmentByIdUsecase } from "@services/establishment/updateEstablishmentByIdUsecase.ts";
 import { deleteEstablishmentByIdUsecase } from "@services/establishment/deleteEstablishmentByIdUsecase.ts";
 import { getUserByIdUsecase } from "@services/user/getUserByIdUsecase.ts";
+import { getEstablishmentsByTypeUsecase } from "@services/establishment/getEstablishmentsByTypeUsecase.ts";
+import { ESTABLISHMENT_TYPE } from "@models/establishment/establishment.ts";
 
 async function createEstablishment(request: Request, response: Response, next: NextFunction) {
     try {
@@ -36,6 +38,20 @@ async function getEstablishmentById(request: Request, response: Response, next: 
         if(!establishment) throw new NotFoundError("Establishment not found");
 
         response.status(200).json(establishment);
+    } catch (error) {
+        next(error);
+    }
+}
+
+async function getEstablishmentsByType(request: Request, response: Response, next: NextFunction) {
+    try {
+        const result = validationResult(request);
+        if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
+
+        const { type } = request.params;
+        const establishments = await getEstablishmentsByTypeUsecase(type as ESTABLISHMENT_TYPE);
+
+        response.status(200).json(establishments);
     } catch (error) {
         next(error);
     }
@@ -94,6 +110,7 @@ async function deleteEstablishmentById(request: Request, response: Response, nex
 export {
     createEstablishment,
     getEstablishmentById,
+    getEstablishmentsByType,
     getAllEstablishments,
     updateEstablishmentById,
     deleteEstablishmentById,

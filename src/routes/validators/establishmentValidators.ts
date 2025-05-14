@@ -1,4 +1,4 @@
-import { body, param } from "express-validator";
+import { body, param, query } from "express-validator";
 
 import { ESTABLISHMENT_TYPE } from "@models/establishment/establishment.ts";
 
@@ -28,6 +28,14 @@ const getEstablishmentByIdValidator = [
         .isString().withMessage("The establishment ID must be a string")
         .trim().notEmpty().withMessage("The establishment ID cannot be empty")
         .isUUID().withMessage("The establishment ID must be a valid UUID")
+];
+
+const getEstablishmentsByTypeValidator = [
+    param("type")
+        .isString().withMessage("The establishment type must be a string")
+        .trim().notEmpty().withMessage("The establishment type cannot be empty")
+        .toUpperCase()
+        .isIn(Object.values(ESTABLISHMENT_TYPE)).withMessage(`The establishment type must be one of: [${Object.values(ESTABLISHMENT_TYPE).join(", ")}]`)
 ];
 
 const putUpdateEstablishmentValidator = [
@@ -66,6 +74,7 @@ const deleteEstablishmentByIdValidator = [
 export {
     postCreateEstablishmentValidator,
     getEstablishmentByIdValidator,
+    getEstablishmentsByTypeValidator,
     putUpdateEstablishmentValidator,
     deleteEstablishmentByIdValidator,
 };

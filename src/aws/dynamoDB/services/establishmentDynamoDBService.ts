@@ -3,8 +3,9 @@ import { randomUUID, UUID } from "node:crypto";
 
 import { dynamoDBClient } from "@aws/dynamoDB/awsClient.ts";
 import { InternalServerError, NotFoundError } from "@utils/errors/AppError.ts";
-import { CreateEstablishmentResponseDTO, GetAllEstablishmentsResponseDTO, GetEstablishmentByIdResponseDTO, UpdateEstablishmentByIdResponseDTO } from "@models/establishment/response/establishmentResponseDTO.ts";
+import { CreateEstablishmentResponseDTO, GetAllEstablishmentsResponseDTO, GetEstablishmentByIdResponseDTO, GetEstablishmentsByTypeResponseDTO, UpdateEstablishmentByIdResponseDTO } from "@models/establishment/response/establishmentResponseDTO.ts";
 import { CreateEstablishmentRequestDTO, UpdateEstablishmentByIdRequestDTO } from "@models/establishment/request/establishmentRequestDTO.ts";
+import { ESTABLISHMENT_TYPE } from "@models/establishment/establishment.ts";
 
 const TABLE_NAME = "establishments";
 
@@ -51,6 +52,28 @@ async function getDynamoDBEstablishmentById(id: UUID): Promise<GetEstablishmentB
         }
 
         return response.Item as GetEstablishmentByIdResponseDTO;
+    } catch (error) {
+        throw new InternalServerError("Failed to fetch establishment from DynamoDB");
+    }
+}
+
+async function getDynamoDBEstablishmentsByType(establishmentType: ESTABLISHMENT_TYPE): Promise<GetEstablishmentsByTypeResponseDTO> {
+    const params: ScanCommandInput = {
+        TableName: TABLE_NAME,
+        FilterExpression: `#type = :type`,
+        ExpressionAttributeNames: {
+            "#type": "type",
+        },
+        ExpressionAttributeValues: {
+            ":type": establishmentType,
+        },
+    };
+
+    try {
+        const command = new ScanCommand(params);
+        const response = await dynamoDBClient.send(command);
+
+        return response.Items as GetEstablishmentsByTypeResponseDTO;
     } catch (error) {
         throw new InternalServerError("Failed to fetch establishment from DynamoDB");
     }
@@ -136,6 +159,7 @@ async function deleteDynamoDBEstablishmentById(id: UUID): Promise<void> {
 export {
     createDynamoDBEstablishment,
     getDynamoDBEstablishmentById,
+    getDynamoDBEstablishmentsByType,
     getDynamoDBAllEstablishments,
     updateDynamoDBEstablishmentById,
     deleteDynamoDBEstablishmentById,
