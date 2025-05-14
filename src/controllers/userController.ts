@@ -24,7 +24,7 @@ async function createUser(request: Request, response: Response, next: NextFuncti
     }
 }
 
-async function getUser(request: Request, response: Response, next: NextFunction) {
+async function getUserById(request: Request, response: Response, next: NextFunction) {
     try {
         const result = validationResult(request);
         if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
@@ -89,7 +89,7 @@ async function deleteUser(request: Request, response: Response, next: NextFuncti
 
 export {
     createUser,
-    getUser,
+    getUserById,
     getAllUsers,
     updateUser,
     deleteUser

@@ -1,9 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
+import { UUID } from "node:crypto";
 
 import { CreateEstablishmentRequestDTO } from "@models/establishment/request/establishmentRequestDTO.ts";
 import { createEstablishmentUsecase } from "@services/establishment/createEstablishmentUsecase.ts";
-import { BadRequestError } from "@utils/errors/AppError.ts";
+import { BadRequestError, NotFoundError } from "@utils/errors/AppError.ts";
+import { getEstablishmentByIdUsecase } from "@services/establishment/getEstablishmentByIdUsecase.ts";
 
 async function createEstablishment(request: Request, response: Response, next: NextFunction) {
     try {
@@ -19,6 +21,23 @@ async function createEstablishment(request: Request, response: Response, next: N
     }
 }
 
+async function getEstablishmentById(request: Request, response: Response, next: NextFunction) {
+    try {
+        const result = validationResult(request);
+        if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
+
+        const { id } = request.params;
+        const establishment = await getEstablishmentByIdUsecase(id as UUID);
+
+        if (!establishment) throw new NotFoundError("Establishment not found");
+
+        response.status(200).json(establishment);
+    } catch (error) {
+        next(error);
+    }
+}
+
 export {
     createEstablishment,
+    getEstablishmentById,
 };

@@ -1,14 +1,14 @@
-import { PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
-import { randomUUID } from "node:crypto";
+import { GetCommand, GetCommandInput, PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
+import { randomUUID, UUID } from "node:crypto";
 
 import { dynamoDBClient } from "@aws/dynamoDB/awsClient.ts";
 import { InternalServerError } from "@utils/errors/AppError.ts";
-import { CreateEstablishmentResponseDTO } from "@models/establishment/response/establishmentResponseDTO.ts";
+import { CreateEstablishmentResponseDTO, GetEstablishmentByIdResponseDTO } from "@models/establishment/response/establishmentResponseDTO.ts";
 import { CreateEstablishmentRequestDTO } from "@models/establishment/request/establishmentRequestDTO.ts";
 
 const TABLE_NAME = "establishments";
 
-async function createDynamoDBEstablishment(establishmentData: CreateEstablishmentRequestDTO) { //Promise<CreateEstablishmentResponseDTO | null> {
+async function createDynamoDBEstablishment(establishmentData: CreateEstablishmentRequestDTO): Promise<CreateEstablishmentResponseDTO | null> {
     const id = randomUUID();
     const now = new Date().toISOString();
     const params: PutCommandInput = {
@@ -26,11 +26,37 @@ async function createDynamoDBEstablishment(establishmentData: CreateEstablishmen
     try {
         const command = new PutCommand(params);
         await dynamoDBClient.send(command);
+
+        const establishment = await getDynamoDBEstablishmentById(id);
+        return establishment;
     } catch (error) {
         throw new InternalServerError("Failed to create establishment in DynamoDB");
     }
 }
 
+async function getDynamoDBEstablishmentById(id: UUID): Promise<GetEstablishmentByIdResponseDTO | null> {
+    const params: GetCommandInput = {
+        TableName: TABLE_NAME,
+        Key: {
+            id,
+        },
+    };
+
+    try {
+        const command = new GetCommand(params);
+        const response = await dynamoDBClient.send(command);
+
+        if (!response.Item) {
+            return null;
+        }
+
+        return response.Item as GetEstablishmentByIdResponseDTO;
+    } catch (error) {
+        throw new InternalServerError("Failed to fetch establishment from DynamoDB");
+    }
+}
+
 export {
     createDynamoDBEstablishment,
+    getDynamoDBEstablishmentById,
 };

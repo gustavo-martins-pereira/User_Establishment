@@ -22,7 +22,7 @@ const postCreateUserValidator = [
         .isIn(Object.values(USER_TYPE)).withMessage(`The user type must be one of: [${Object.values(USER_TYPE).join(", ")}]`)
 ];
 
-const getUserIdValidator = [
+const getUserByIdValidator = [
     param("id")
         .exists().withMessage("The user ID is required")
         .isString().withMessage("The user ID must be a string")
@@ -59,7 +59,7 @@ const deleteUserIdValidator = [
 
 export {
     postCreateUserValidator,
-    getUserIdValidator,
+    getUserByIdValidator,
     putUpdateUserValidator,
     deleteUserIdValidator,
 };

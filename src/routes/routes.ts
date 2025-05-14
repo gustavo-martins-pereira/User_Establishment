@@ -1,20 +1,21 @@
 import express from "express"
 
-import { createUser, getUser, updateUser, deleteUser, getAllUsers } from "@controllers/userController.ts";
-import { postCreateUserValidator, getUserIdValidator, putUpdateUserValidator, deleteUserIdValidator } from "./validators/userValidators.ts";
-import { createEstablishment } from "@controllers/establishmentController.ts";
-import { postCreateEstablishmentValidator } from "./validators/establishmentValidators.ts";
+import { createUser, getUserById, updateUser, deleteUser, getAllUsers } from "@controllers/userController.ts";
+import { postCreateUserValidator, getUserByIdValidator, putUpdateUserValidator, deleteUserIdValidator } from "./validators/userValidators.ts";
+import { createEstablishment, getEstablishmentById } from "@controllers/establishmentController.ts";
+import { getEstablishmentByIdValidator, postCreateEstablishmentValidator } from "./validators/establishmentValidators.ts";
 
 const routes = express.Router();
 
 // USER
 routes.post("/users", postCreateUserValidator, createUser);
-routes.get("/users/:id", getUserIdValidator, getUser);
-routes.get("/users", getUserIdValidator, getAllUsers);
+routes.get("/users/:id", getUserByIdValidator, getUserById);
+routes.get("/users", getAllUsers);
 routes.put("/users/:id", putUpdateUserValidator, updateUser);
 routes.delete("/users/:id", deleteUserIdValidator, deleteUser);
 
 // ESTABLISHMENT
 routes.post("/establishments", postCreateEstablishmentValidator, createEstablishment);
+routes.get("/establishments/:id", getEstablishmentByIdValidator, getEstablishmentById);
 
 export default routes;
