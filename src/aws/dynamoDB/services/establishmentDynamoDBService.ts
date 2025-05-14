@@ -1,4 +1,4 @@
-import { GetCommand, GetCommandInput, PutCommand, PutCommandInput, ScanCommand, ScanCommandInput, UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, DeleteCommandInput, GetCommand, GetCommandInput, PutCommand, PutCommandInput, ScanCommand, ScanCommandInput, UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { randomUUID, UUID } from "node:crypto";
 
 import { dynamoDBClient } from "@aws/dynamoDB/awsClient.ts";
@@ -117,9 +117,26 @@ async function updateDynamoDBEstablishmentById(id: UUID, updateEstablishmentData
     }
 }
 
+async function deleteDynamoDBEstablishmentById(id: UUID): Promise<void> {
+    const params: DeleteCommandInput = {
+        TableName: TABLE_NAME,
+        Key: {
+            id
+        }
+    };
+
+    try {
+        const command = new DeleteCommand(params);
+        await dynamoDBClient.send(command);
+    } catch (error) {
+        throw new InternalServerError("Failed to delete establishment from DynamoDB");
+    }
+}
+
 export {
     createDynamoDBEstablishment,
     getDynamoDBEstablishmentById,
     getDynamoDBAllEstablishments,
     updateDynamoDBEstablishmentById,
+    deleteDynamoDBEstablishmentById,
 };

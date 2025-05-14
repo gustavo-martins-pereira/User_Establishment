@@ -8,6 +8,7 @@ import { BadRequestError, NotFoundError } from "@utils/errors/AppError.ts";
 import { getEstablishmentByIdUsecase } from "@services/establishment/getEstablishmentByIdUsecase.ts";
 import { getAllEstablishmentsUsecase } from "@services/establishment/getAllEstablishmentsUsecase.ts";
 import { updateEstablishmentByIdUsecase } from "@services/establishment/updateEstablishmentByIdUsecase.ts";
+import { deleteEstablishmentByIdUsecase } from "@services/establishment/deleteEstablishmentByIdUsecase.ts";
 
 async function createEstablishment(request: Request, response: Response, next: NextFunction) {
     try {
@@ -68,9 +69,28 @@ async function updateEstablishmentById(request: Request, response: Response, nex
     }
 }
 
+async function deleteEstablishmentById(request: Request, response: Response, next: NextFunction) {
+    try {
+        const result = validationResult(request);
+        if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
+
+        const { id } = request.params;
+        const isEstablishmentExists = await getEstablishmentByIdUsecase(id as UUID);
+        
+        if (!isEstablishmentExists) throw new NotFoundError("Establishment not found");
+
+        await deleteEstablishmentByIdUsecase(id as UUID);
+
+        response.status(204).send();
+    } catch (error) {
+        next(error);
+    }
+}
+
 export {
     createEstablishment,
     getEstablishmentById,
     getAllEstablishments,
     updateEstablishmentById,
+    deleteEstablishmentById,
 };

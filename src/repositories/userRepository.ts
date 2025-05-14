@@ -1,6 +1,6 @@
 import { UUID } from "node:crypto";
 
-import { createDynamoDBUser, getDynamoDBUserById, updateDynamoDBUserById, deleteDynamoDBUser, getDynamoDBAllUsers } from "@aws/dynamoDB/services/userDynamoDBService.ts";
+import { createDynamoDBUser, getDynamoDBUserById, updateDynamoDBUserById, deleteDynamoDBUserById, getDynamoDBAllUsers } from "@aws/dynamoDB/services/userDynamoDBService.ts";
 import { CreateUserRequestDTO, UpdateUserRequestDTO } from "@models/user/request/userRequestDTO.ts";
 import { CreateUserResponseDTO, GetAllUsersResponseDTO, GetUserByIdResponseDTO, UpdateUserByIdResponseDTO } from "@models/user/response/userResponseDTO.ts";
 
@@ -20,8 +20,8 @@ async function updateUserById(id: UUID, userData: UpdateUserRequestDTO): Promise
     return await updateDynamoDBUserById(id, userData);
 }
 
-async function deleteUser(id: UUID): Promise<void> {
-    await deleteDynamoDBUser(id);
+async function deleteUserById(id: UUID): Promise<void> {
+    await deleteDynamoDBUserById(id);
 }
 
 export {
@@ -29,5 +29,5 @@ export {
     getUserById,
     getAllUsers,
     updateUserById,
-    deleteUser,
+    deleteUserById,
 };

@@ -43,8 +43,17 @@ const putUpdateEstablishmentValidator = [
         .escape(),
 ];
 
+const deleteEstablishmentByIdValidator = [
+    param("id")
+        .exists().withMessage("The establishment ID is required")
+        .isString().withMessage("The establishment ID must be a string")
+        .trim().notEmpty().withMessage("The establishment ID cannot be empty")
+        .isUUID().withMessage("The establishment ID must be a valid UUID")
+];
+
 export {
     postCreateEstablishmentValidator,
     getEstablishmentByIdValidator,
     putUpdateEstablishmentValidator,
+    deleteEstablishmentByIdValidator,
 };

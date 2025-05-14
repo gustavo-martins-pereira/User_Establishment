@@ -117,7 +117,7 @@ async function updateDynamoDBUserById(id: UUID, updateUserData: UpdateUserReques
     }
 }
 
-async function deleteDynamoDBUser(id: UUID): Promise<void> {
+async function deleteDynamoDBUserById(id: UUID): Promise<void> {
     const params: DeleteCommandInput = {
         TableName: TABLE_NAME,
         Key: {
@@ -138,5 +138,5 @@ export {
     getDynamoDBUserById,
     getDynamoDBAllUsers,
     updateDynamoDBUserById,
-    deleteDynamoDBUser
+    deleteDynamoDBUserById,
 };

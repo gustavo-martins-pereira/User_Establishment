@@ -5,7 +5,7 @@ import { UUID } from "node:crypto";
 import { createUserUsecase } from "@services/user/createUserUsecase.ts";
 import { getUserByIdUsecase } from "@services/user/getUserByIdUsecase.ts";
 import { updateUserByIdUsecase } from "@services/user/updateUserByIdUsecase.ts";
-import { deleteUserUsecase } from "@services/user/deleteUserUsecase.ts";
+import { deleteUserByIdUsecase } from "@services/user/deleteUserByIdUsecase.ts";
 import { CreateUserRequestDTO, UpdateUserRequestDTO } from "@models/user/request/userRequestDTO.ts";
 import { BadRequestError, NotFoundError } from "@utils/errors/AppError.ts";
 import { getAllUsersUsecase } from "@services/user/getAllUsersUsecase.ts";
@@ -69,7 +69,7 @@ async function updateUserById(request: Request, response: Response, next: NextFu
     }
 }
 
-async function deleteUser(request: Request, response: Response, next: NextFunction) {
+async function deleteUserById(request: Request, response: Response, next: NextFunction) {
     try {
         const result = validationResult(request);
         if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
@@ -79,7 +79,7 @@ async function deleteUser(request: Request, response: Response, next: NextFuncti
         
         if (!isUserExists) throw new NotFoundError("User not found");
 
-        await deleteUserUsecase(id as UUID);
+        await deleteUserByIdUsecase(id as UUID);
 
         response.status(204).send();
     } catch (error) {
@@ -92,5 +92,5 @@ export {
     getUserById,
     getAllUsers,
     updateUserById,
-    deleteUser
+    deleteUserById,
 };

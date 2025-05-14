@@ -1,10 +1,10 @@
 import { UUID } from "node:crypto";
 
-import { createDynamoDBEstablishment, getDynamoDBAllEstablishments, getDynamoDBEstablishmentById, updateDynamoDBEstablishmentById } from "@aws/dynamoDB/services/establishmentDynamoDBService.ts";
+import { createDynamoDBEstablishment, deleteDynamoDBEstablishmentById, getDynamoDBAllEstablishments, getDynamoDBEstablishmentById, updateDynamoDBEstablishmentById } from "@aws/dynamoDB/services/establishmentDynamoDBService.ts";
 import { CreateEstablishmentRequestDTO, UpdateEstablishmentByIdRequestDTO } from "@models/establishment/request/establishmentRequestDTO.ts";
-import { GetAllEstablishmentsResponseDTO, GetEstablishmentByIdResponseDTO, UpdateEstablishmentByIdResponseDTO } from "@models/establishment/response/establishmentResponseDTO.ts";
+import { CreateEstablishmentResponseDTO, GetAllEstablishmentsResponseDTO, GetEstablishmentByIdResponseDTO, UpdateEstablishmentByIdResponseDTO } from "@models/establishment/response/establishmentResponseDTO.ts";
 
-async function createEstablishment(establishmentData: CreateEstablishmentRequestDTO) {
+async function createEstablishment(establishmentData: CreateEstablishmentRequestDTO): Promise<CreateEstablishmentResponseDTO | null> {
     return await createDynamoDBEstablishment(establishmentData);
 }
 
@@ -20,9 +20,14 @@ async function updateEstablishmentById(id: UUID, establishmentData: UpdateEstabl
     return await updateDynamoDBEstablishmentById(id, establishmentData);
 }
 
+async function deleteEstablishmentById(id: UUID): Promise<void> {
+    await deleteDynamoDBEstablishmentById(id);
+}
+
 export {
     createEstablishment,
     getEstablishmentById,
     getAllEstablishments,
     updateEstablishmentById,
+    deleteEstablishmentById,
 };

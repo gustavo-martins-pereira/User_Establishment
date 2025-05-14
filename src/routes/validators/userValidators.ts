@@ -49,7 +49,7 @@ const putUpdateUserValidator = [
         .escape()
 ];
 
-const deleteUserIdValidator = [
+const deleteUserByIdValidator = [
     param("id")
         .exists().withMessage("The user ID is required")
         .isString().withMessage("The user ID must be a string")
@@ -61,5 +61,5 @@ export {
     postCreateUserValidator,
     getUserByIdValidator,
     putUpdateUserValidator,
-    deleteUserIdValidator,
+    deleteUserByIdValidator,
 };
