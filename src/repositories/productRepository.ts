@@ -1,11 +1,18 @@
-import { createDynamoDBProduct } from "@aws/dynamoDB/services/productDynamoDBService.ts";
+import { UUID } from "node:crypto";
+
+import { createDynamoDBProduct, getDynamoDBProductById } from "@aws/dynamoDB/services/productDynamoDBService.ts";
 import { CreateProductRequestDTO } from "@models/product/request/productRequestDTO.ts";
-import { CreateProductResponseDTO } from "@models/product/response/productResponseDTO.ts";
+import { CreateProductResponseDTO, GetProductByIdResponseDTO } from "@models/product/response/productResponseDTO.ts";
 
 async function createProduct(productData: CreateProductRequestDTO): Promise<CreateProductResponseDTO | null> {
     return await createDynamoDBProduct(productData);
 }
 
+async function getProductById(id: UUID): Promise<GetProductByIdResponseDTO | null> {
+    return await getDynamoDBProductById(id);
+}
+
 export {
     createProduct,
+    getProductById,
 };

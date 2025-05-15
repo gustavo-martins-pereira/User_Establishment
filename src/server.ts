@@ -1,5 +1,4 @@
 import express from "express";
-import { errorHandler } from "@middlewares/errorHandler.ts";
 import "@configs/env.ts";
 import routes from "@routes/routes.ts";
 
@@ -8,8 +7,6 @@ const app = express();
 
 app.use(express.json());
 app.use(routes);
-
-app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 

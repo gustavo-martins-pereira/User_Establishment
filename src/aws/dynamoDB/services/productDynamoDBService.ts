@@ -58,4 +58,5 @@ async function getDynamoDBProductById(id: UUID): Promise<GetProductByIdResponseD
 
 export {
     createDynamoDBProduct,
+    getDynamoDBProductById,
 };
