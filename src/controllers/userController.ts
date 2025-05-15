@@ -9,13 +9,18 @@ import { CreateUserRequestDTO, UpdateUserRequestDTO } from "@models/user/request
 import { NotFoundError } from "@utils/errors/AppError.ts";
 import { getAllUsersUsecase } from "@services/user/getAllUsersUsecase.ts";
 import { handleExpressValidation } from "@utils/handles/handleExpressValidation.ts";
+import { removeUndefinedProperties } from "@utils/object.ts";
 
 async function createUser(request: Request, response: Response, next: NextFunction) {
     try {
         handleExpressValidation(request);
 
-        const userData: CreateUserRequestDTO = request.body;
-        const user = await createUserUsecase(userData);
+        const {
+            name,
+            email,
+            type,
+        }: CreateUserRequestDTO = request.body;
+        const user = await createUserUsecase({ name, email, type } as CreateUserRequestDTO);
 
         response.status(201).json(user);
     } catch (error) {
@@ -29,7 +34,6 @@ async function getUserById(request: Request, response: Response, next: NextFunct
 
         const { id } = request.params;
         const user = await getUserByIdUsecase(id as UUID);
-
         if(!user) throw new NotFoundError("User not found");
 
         response.status(200).json(user);
@@ -53,12 +57,19 @@ async function updateUserById(request: Request, response: Response, next: NextFu
         handleExpressValidation(request);
 
         const { id } = request.params;
-        const userData: UpdateUserRequestDTO = request.body;
+        const {
+            name,
+            email,
+            type,
+        }: UpdateUserRequestDTO = request.body;
 
         const isUserExists = await getUserByIdUsecase(id as UUID);
         if(!isUserExists) throw new NotFoundError("User not found");
 
-        const user = await updateUserByIdUsecase(id as UUID, userData);
+        const user = await updateUserByIdUsecase(
+            id as UUID,
+            removeUndefinedProperties({ name, email, type } as UpdateUserRequestDTO)
+        );
 
         response.status(200).json(user);
     } catch (error) {
@@ -71,8 +82,8 @@ async function deleteUserById(request: Request, response: Response, next: NextFu
         handleExpressValidation(request);
 
         const { id } = request.params;
+
         const isUserExists = await getUserByIdUsecase(id as UUID);
-        
         if(!isUserExists) throw new NotFoundError("User not found");
 
         await deleteUserByIdUsecase(id as UUID);

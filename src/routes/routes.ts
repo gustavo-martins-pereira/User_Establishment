@@ -12,7 +12,6 @@ import { createEstablishmentRule, deleteEstablishmentRuleById, getEstablishmentR
 
 const routes = express.Router();
 
-// TODO: Exclude other properties that aren't in the model
 // USER
 routes.post("/users", postCreateUserValidator, createUser);
 routes.get("/users/:id", getUserByIdValidator, getUserById);

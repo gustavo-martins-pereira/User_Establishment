@@ -10,17 +10,22 @@ import { getEstablishmentByIdUsecase } from "@services/establishment/getEstablis
 import { updateProductByIdUsecase } from "@services/product/updateProductByIdUsecase.ts";
 import { deleteProductByIdUsecase } from "@services/product/deleteProductByIdUsecase.ts";
 import { handleExpressValidation } from "@utils/handles/handleExpressValidation.ts";
+import { removeUndefinedProperties } from "@utils/object.ts";
 
 async function createProduct(request: Request, response: Response, next: NextFunction) {
     try {
         handleExpressValidation(request);
 
-        const productData: CreateProductRequestDTO = request.body;
+        const {
+            name,
+            price,
+            establishmentId,
+        }: CreateProductRequestDTO = request.body;
 
-        const isProductExists = await getProductByIdUsecase(productData.establishmentId);
-        if(!isProductExists) throw new NotFoundError("Product not found");
+        const isEstablishmentExists = await getEstablishmentByIdUsecase(establishmentId);
+        if(!isEstablishmentExists) throw new NotFoundError("Establishment not found");
 
-        const Product = await createProductUsecase(productData);
+        const Product = await createProductUsecase({ name, price, establishmentId } as CreateProductRequestDTO);
 
         response.status(201).json(Product);
     } catch (error) {
@@ -58,15 +63,22 @@ async function updateProductById(request: Request, response: Response, next: Nex
         handleExpressValidation(request);
 
         const { id } = request.params;
-        const productData: UpdateProductByIdRequestDTO = request.body;
+        const {
+            name,
+            price,
+            establishmentId,
+        }: UpdateProductByIdRequestDTO = request.body;
 
         const isProductExists = await getProductByIdUsecase(id as UUID);
         if(!isProductExists) throw new NotFoundError("Product not found");
 
-        const isEstablishmentExists = await getEstablishmentByIdUsecase(productData.establishmentId as UUID);
-        if(!isEstablishmentExists) throw new NotFoundError("Establishment id not found");
+        const isEstablishmentExists = await getEstablishmentByIdUsecase(establishmentId as UUID);
+        if(!isEstablishmentExists) throw new NotFoundError("Establishment not found");
 
-        const product = await updateProductByIdUsecase(id as UUID, productData);
+        const product = await updateProductByIdUsecase(
+            id as UUID,
+            removeUndefinedProperties({ name, price, establishmentId } as UpdateProductByIdRequestDTO)
+        );
 
         response.status(200).json(product);
     } catch (error) {

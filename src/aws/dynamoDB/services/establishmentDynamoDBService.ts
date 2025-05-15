@@ -132,6 +132,7 @@ async function updateDynamoDBEstablishmentById(id: UUID, updateEstablishmentData
 
         return response.Attributes as UpdateEstablishmentByIdResponseDTO;
     } catch (error) {
+        console.log(error);
         if (error instanceof NotFoundError) {
             throw error;
         }
