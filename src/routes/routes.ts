@@ -4,12 +4,13 @@ import { createUser, getUserById, updateUserById, deleteUserById, getAllUsers } 
 import { postCreateUserValidator, getUserByIdValidator, putUpdateUserValidator, deleteUserByIdValidator } from "./validators/userValidators.ts";
 import { createEstablishment, deleteEstablishmentById, getAllEstablishments, getEstablishmentById, getEstablishmentsByType, updateEstablishmentById } from "@controllers/establishmentController.ts";
 import { deleteEstablishmentByIdValidator, getEstablishmentByIdValidator, getEstablishmentsByTypeValidator, postCreateEstablishmentValidator, putUpdateEstablishmentValidator } from "./validators/establishmentValidators.ts";
-import { getProductByIdValidator, postCreateProductValidator } from "./validators/productValidators.ts";
-import { createProduct, getAllProducts, getProductById } from "@controllers/productController.ts";
+import { getProductByIdValidator, postCreateProductValidator, putUpdateProductValidator } from "./validators/productValidators.ts";
+import { createProduct, getAllProducts, getProductById, updateProductById } from "@controllers/productController.ts";
 import { errorHandler } from "@middlewares/errorHandler.ts";
 
 const routes = express.Router();
 
+// TODO: Exclude other properties that aren't in the model
 // USER
 routes.post("/users", postCreateUserValidator, createUser);
 routes.get("/users/:id", getUserByIdValidator, getUserById);
@@ -29,6 +30,7 @@ routes.delete("/establishments/:id", deleteEstablishmentByIdValidator, deleteEst
 routes.post("/products", postCreateProductValidator, createProduct);
 routes.get("/products/:id", getProductByIdValidator, getProductById);
 routes.get("/products", getAllProducts);
+routes.put("/products/:id", putUpdateProductValidator, updateProductById);
 
 // ERROR MIDDLEWARES
 routes.use(errorHandler);
