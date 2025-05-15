@@ -37,7 +37,7 @@ routes.delete("/products/:id", deleteProductByIdValidator, deleteProductById);
 
 // ESTABLISHMENT RULE
 routes.post("/establishment-rules", postCreateEstablishmentRuleValidator, createEstablishmentRule);
-routes.get("/establishment-rules/establishment/:id", getEstablishmentRuleByEstablishmentIdValidator, getEstablishmentRuleByEstablishmentId);
+routes.get("/establishment-rules/establishment/:establishmentId", getEstablishmentRuleByEstablishmentIdValidator, getEstablishmentRuleByEstablishmentId);
 routes.put("/establishment-rules/:id", putUpdateEstablishmentRuleValidator, updateEstablishmentRuleById);
 routes.delete("/establishment-rules/:id", deleteEstablishmentRuleByIdValidator, deleteEstablishmentRuleById);
 

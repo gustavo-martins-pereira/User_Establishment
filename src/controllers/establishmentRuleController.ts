@@ -35,9 +35,11 @@ async function getEstablishmentRuleByEstablishmentId(request: Request, response:
         if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
 
         const { establishmentId } = request.params;
-        const establishmentRule = await getEstablishmentRuleByEstablishmentIdUsecase(establishmentId as UUID);
+        const isEstablishmentExists = await getEstablishmentByIdUsecase(establishmentId as UUID);
+        if(!isEstablishmentExists) throw new NotFoundError("Establishment not found");
 
-        if(!establishmentRule) throw new NotFoundError("Establishment rule not found");
+        const establishmentRule = await getEstablishmentRuleByEstablishmentIdUsecase(establishmentId as UUID);
+        if(!establishmentRule) throw new NotFoundError("Establishment rule not found in this establishment");
 
         response.status(200).json(establishmentRule);
     } catch (error) {

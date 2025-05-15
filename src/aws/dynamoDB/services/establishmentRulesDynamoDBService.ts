@@ -60,7 +60,7 @@ async function getDynamoDBEstablishmentRuleByEstablishmentId(establishmentId: UU
     const params: QueryCommandInput = {
         TableName: TABLE_NAME,
         IndexName: "EstablishmentIdIndex",
-        KeyConditionExpression: "EstablishmentId = :establishmentId",
+        KeyConditionExpression: "establishmentId = :establishmentId",
         ExpressionAttributeValues: {
             ":establishmentId": establishmentId,
         },
@@ -69,7 +69,6 @@ async function getDynamoDBEstablishmentRuleByEstablishmentId(establishmentId: UU
     try {
         const command = new QueryCommand(params);
         const response = await dynamoDBClient.send(command);
-        console.log(response);
 
         if(!response.Items || response.Items.length === 0) {
             return null;
@@ -77,8 +76,6 @@ async function getDynamoDBEstablishmentRuleByEstablishmentId(establishmentId: UU
 
         return response.Items[0] as GetEstablishmentRuleByEstablishmentIdResponseDTO;
     } catch (error) {
-        console.log("=====================");
-        console.log(error);
         throw new InternalServerError("Failed to fetch establishment rule from DynamoDB");
     }
 }

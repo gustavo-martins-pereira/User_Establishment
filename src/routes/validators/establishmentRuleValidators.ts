@@ -16,7 +16,7 @@ const postCreateEstablishmentRuleValidator = [
 ];
 
 const getEstablishmentRuleByEstablishmentIdValidator = [
-    param("id")
+    param("establishmentId")
         .exists().withMessage("The establishment rule ID is required")
         .isString().withMessage("The establishment rule ID must be a string")
         .trim().notEmpty().withMessage("The establishment rule ID cannot be empty")
