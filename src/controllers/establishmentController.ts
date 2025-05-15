@@ -1,10 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { validationResult } from "express-validator";
 import { UUID } from "node:crypto";
 
 import { CreateEstablishmentRequestDTO, UpdateEstablishmentByIdRequestDTO } from "@models/establishment/request/establishmentRequestDTO.ts";
 import { createEstablishmentUsecase } from "@services/establishment/createEstablishmentUsecase.ts";
-import { BadRequestError, NotFoundError } from "@utils/errors/AppError.ts";
+import { NotFoundError } from "@utils/errors/AppError.ts";
 import { getEstablishmentByIdUsecase } from "@services/establishment/getEstablishmentByIdUsecase.ts";
 import { getAllEstablishmentsUsecase } from "@services/establishment/getAllEstablishmentsUsecase.ts";
 import { updateEstablishmentByIdUsecase } from "@services/establishment/updateEstablishmentByIdUsecase.ts";
@@ -12,11 +11,11 @@ import { deleteEstablishmentByIdUsecase } from "@services/establishment/deleteEs
 import { getUserByIdUsecase } from "@services/user/getUserByIdUsecase.ts";
 import { getEstablishmentsByTypeUsecase } from "@services/establishment/getEstablishmentsByTypeUsecase.ts";
 import { ESTABLISHMENT_TYPE } from "@models/establishment/establishment.ts";
+import { handleExpressValidation } from "@utils/handles/handleExpressValidation.ts";
 
 async function createEstablishment(request: Request, response: Response, next: NextFunction) {
     try {
-        const result = validationResult(request);
-        if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
+        handleExpressValidation(request);
 
         const establishmentData: CreateEstablishmentRequestDTO = request.body;
         const establishment = await createEstablishmentUsecase(establishmentData);
@@ -29,8 +28,7 @@ async function createEstablishment(request: Request, response: Response, next: N
 
 async function getEstablishmentById(request: Request, response: Response, next: NextFunction) {
     try {
-        const result = validationResult(request);
-        if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
+        handleExpressValidation(request);
 
         const { id } = request.params;
         const establishment = await getEstablishmentByIdUsecase(id as UUID);
@@ -45,8 +43,7 @@ async function getEstablishmentById(request: Request, response: Response, next: 
 
 async function getEstablishmentsByType(request: Request, response: Response, next: NextFunction) {
     try {
-        const result = validationResult(request);
-        if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
+        handleExpressValidation(request);
 
         const { type } = request.params;
         const establishments = await getEstablishmentsByTypeUsecase(type as ESTABLISHMENT_TYPE);
@@ -69,8 +66,7 @@ async function getAllEstablishments(request: Request, response: Response, next: 
 
 async function updateEstablishmentById(request: Request, response: Response, next: NextFunction) {
     try {
-        const result = validationResult(request);
-        if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
+        handleExpressValidation(request);
 
         const { id } = request.params;
         const establishmentData: UpdateEstablishmentByIdRequestDTO = request.body;
@@ -91,8 +87,7 @@ async function updateEstablishmentById(request: Request, response: Response, nex
 
 async function deleteEstablishmentById(request: Request, response: Response, next: NextFunction) {
     try {
-        const result = validationResult(request);
-        if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
+        handleExpressValidation(request);
 
         const { id } = request.params;
         const isEstablishmentExists = await getEstablishmentByIdUsecase(id as UUID);

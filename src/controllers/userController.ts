@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { validationResult } from "express-validator";
 import { UUID } from "node:crypto";
 
 import { createUserUsecase } from "@services/user/createUserUsecase.ts";
@@ -7,13 +6,13 @@ import { getUserByIdUsecase } from "@services/user/getUserByIdUsecase.ts";
 import { updateUserByIdUsecase } from "@services/user/updateUserByIdUsecase.ts";
 import { deleteUserByIdUsecase } from "@services/user/deleteUserByIdUsecase.ts";
 import { CreateUserRequestDTO, UpdateUserRequestDTO } from "@models/user/request/userRequestDTO.ts";
-import { BadRequestError, NotFoundError } from "@utils/errors/AppError.ts";
+import { NotFoundError } from "@utils/errors/AppError.ts";
 import { getAllUsersUsecase } from "@services/user/getAllUsersUsecase.ts";
+import { handleExpressValidation } from "@utils/handles/handleExpressValidation.ts";
 
 async function createUser(request: Request, response: Response, next: NextFunction) {
     try {
-        const result = validationResult(request);
-        if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
+        handleExpressValidation(request);
 
         const userData: CreateUserRequestDTO = request.body;
         const user = await createUserUsecase(userData);
@@ -26,8 +25,7 @@ async function createUser(request: Request, response: Response, next: NextFuncti
 
 async function getUserById(request: Request, response: Response, next: NextFunction) {
     try {
-        const result = validationResult(request);
-        if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
+        handleExpressValidation(request);
 
         const { id } = request.params;
         const user = await getUserByIdUsecase(id as UUID);
@@ -52,8 +50,7 @@ async function getAllUsers(request: Request, response: Response, next: NextFunct
 
 async function updateUserById(request: Request, response: Response, next: NextFunction) {
     try {
-        const result = validationResult(request);
-        if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
+        handleExpressValidation(request);
 
         const { id } = request.params;
         const userData: UpdateUserRequestDTO = request.body;
@@ -71,8 +68,7 @@ async function updateUserById(request: Request, response: Response, next: NextFu
 
 async function deleteUserById(request: Request, response: Response, next: NextFunction) {
     try {
-        const result = validationResult(request);
-        if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
+        handleExpressValidation(request);
 
         const { id } = request.params;
         const isUserExists = await getUserByIdUsecase(id as UUID);

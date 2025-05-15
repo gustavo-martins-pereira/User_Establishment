@@ -1,20 +1,19 @@
 import { Request, Response, NextFunction } from "express";
-import { validationResult } from "express-validator";
 import { UUID } from "node:crypto";
 
 import { CreateEstablishmentRuleRequestDTO, UpdateEstablishmentRuleByIdRequestDTO } from "@models/establishmentRule/request/establishmentRequestDTO.ts";
 import { createEstablishmentRuleUsecase } from "@services/establishmentRule/createEstablishmentRuleUsecase.ts";
-import { BadRequestError, NotFoundError } from "@utils/errors/AppError.ts";
+import { NotFoundError } from "@utils/errors/AppError.ts";
 import { getEstablishmentRuleByIdUsecase } from "@services/establishmentRule/getEstablishmentRuleByIdUsecase.ts";
 import { getEstablishmentByIdUsecase } from "@services/establishment/getEstablishmentByIdUsecase.ts";
 import { updateEstablishmentRuleByIdUsecase } from "@services/establishmentRule/updateEstablishmentRuleByIdUsecase.ts";
 import { deleteEstablishmentRuleByIdUsecase } from "@services/establishmentRule/deleteEstablishmentRuleByIdUsecase.ts";
 import { getEstablishmentRuleByEstablishmentIdUsecase } from "@services/establishmentRule/getEstablishmentRuleByEstablishmentIdUsecase.ts";
+import { handleExpressValidation } from "@utils/handles/handleExpressValidation.ts";
 
 async function createEstablishmentRule(request: Request, response: Response, next: NextFunction) {
     try {
-        const result = validationResult(request);
-        if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
+        handleExpressValidation(request);
 
         const establishmentRuleData: CreateEstablishmentRuleRequestDTO = request.body;
 
@@ -31,8 +30,7 @@ async function createEstablishmentRule(request: Request, response: Response, nex
 
 async function getEstablishmentRuleByEstablishmentId(request: Request, response: Response, next: NextFunction) {
     try {
-        const result = validationResult(request);
-        if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
+        handleExpressValidation(request);
 
         const { establishmentId } = request.params;
         const isEstablishmentExists = await getEstablishmentByIdUsecase(establishmentId as UUID);
@@ -49,8 +47,7 @@ async function getEstablishmentRuleByEstablishmentId(request: Request, response:
 
 async function updateEstablishmentRuleById(request: Request, response: Response, next: NextFunction) {
     try {
-        const result = validationResult(request);
-        if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
+        handleExpressValidation(request);
 
         const { id } = request.params;
         const establishmentRuleData: UpdateEstablishmentRuleByIdRequestDTO = request.body;
@@ -69,8 +66,7 @@ async function updateEstablishmentRuleById(request: Request, response: Response,
 
 async function deleteEstablishmentRuleById(request: Request, response: Response, next: NextFunction) {
     try {
-        const result = validationResult(request);
-        if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
+        handleExpressValidation(request);
 
         const { id } = request.params;
         const isEstablishmentRuleExists = await getEstablishmentRuleByIdUsecase(id as UUID);
