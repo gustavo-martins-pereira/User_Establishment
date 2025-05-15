@@ -5,7 +5,7 @@ import { postCreateUserValidator, getUserByIdValidator, putUpdateUserValidator, 
 import { createEstablishment, deleteEstablishmentById, getAllEstablishments, getEstablishmentById, getEstablishmentsByType, updateEstablishmentById } from "@controllers/establishmentController.ts";
 import { deleteEstablishmentByIdValidator, getEstablishmentByIdValidator, getEstablishmentsByTypeValidator, postCreateEstablishmentValidator, putUpdateEstablishmentValidator } from "./validators/establishmentValidators.ts";
 import { getProductByIdValidator, postCreateProductValidator } from "./validators/productValidators.ts";
-import { createProduct, getProductById } from "@controllers/productController.ts";
+import { createProduct, getAllProducts, getProductById } from "@controllers/productController.ts";
 import { errorHandler } from "@middlewares/errorHandler.ts";
 
 const routes = express.Router();
@@ -28,6 +28,7 @@ routes.delete("/establishments/:id", deleteEstablishmentByIdValidator, deleteEst
 // PRODUCT
 routes.post("/products", postCreateProductValidator, createProduct);
 routes.get("/products/:id", getProductByIdValidator, getProductById);
+routes.get("/products", getAllProducts);
 
 // ERROR MIDDLEWARES
 routes.use(errorHandler);

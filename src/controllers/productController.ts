@@ -6,7 +6,8 @@ import { CreateProductRequestDTO } from "@models/product/request/productRequestD
 import { createProductUsecase } from "@services/product/createProductUsecase.ts";
 import { BadRequestError, NotFoundError } from "@utils/errors/AppError.ts";
 import { getEstablishmentByIdUsecase } from "@services/establishment/getEstablishmentByIdUsecase.ts";
-import { getProductByIdUsecase } from "@services/product/getEstablishmentByIdUsecase.ts";
+import { getProductByIdUsecase } from "@services/product/getProductByIdUsecase.ts";
+import { getAllProductsUsecase } from "@services/product/getAllProductsUsecase.ts";
 
 async function createProduct(request: Request, response: Response, next: NextFunction) {
     try {
@@ -42,7 +43,18 @@ async function getProductById(request: Request, response: Response, next: NextFu
     }
 }
 
+async function getAllProducts(request: Request, response: Response, next: NextFunction) {
+    try {
+        const products = await getAllProductsUsecase();
+
+        response.status(200).json(products);
+    } catch (error) {
+        next(error);
+    }
+}
+
 export {
     createProduct,
     getProductById,
+    getAllProducts,
 };

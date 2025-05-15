@@ -1,8 +1,8 @@
-import { GetCommand, GetCommandInput, PutCommand, PutCommandInput } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, GetCommandInput, PutCommand, PutCommandInput, ScanCommand, ScanCommandInput } from "@aws-sdk/lib-dynamodb";
 import { randomUUID, UUID } from "node:crypto";
 
 import { CreateProductRequestDTO } from "@models/product/request/productRequestDTO.ts";
-import { CreateProductResponseDTO, GetProductByIdResponseDTO } from "@models/product/response/productResponseDTO.ts";
+import { CreateProductResponseDTO, GetAllProductsResponseDTO, GetProductByIdResponseDTO } from "@models/product/response/productResponseDTO.ts";
 import { dynamoDBClient } from "../awsClient.ts";
 import { InternalServerError } from "@utils/errors/AppError.ts";
 
@@ -56,7 +56,27 @@ async function getDynamoDBProductById(id: UUID): Promise<GetProductByIdResponseD
     }
 }
 
+async function getDynamoDBAllProducts(): Promise<GetAllProductsResponseDTO> {
+    const params: ScanCommandInput = {
+        TableName: TABLE_NAME,
+    };
+
+    try {
+        const command = new ScanCommand(params);
+        const response = await dynamoDBClient.send(command);
+
+        if (!response.Items) {
+            return [];
+        }
+
+        return response.Items as GetAllProductsResponseDTO;
+    } catch (error) {
+        throw new InternalServerError("Failed to fetch all products from DynamoDB");
+    }
+}
+
 export {
     createDynamoDBProduct,
     getDynamoDBProductById,
+    getDynamoDBAllProducts,
 };

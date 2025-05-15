@@ -94,7 +94,7 @@ async function getDynamoDBAllEstablishments(): Promise<GetAllEstablishmentsRespo
 
         return response.Items as GetAllEstablishmentsResponseDTO;
     } catch (error) {
-        throw new InternalServerError("Failed to fetch all users from DynamoDB");
+        throw new InternalServerError("Failed to fetch all establishments from DynamoDB");
     }
 }
 
