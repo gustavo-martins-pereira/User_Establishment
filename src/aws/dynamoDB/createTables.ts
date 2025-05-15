@@ -4,9 +4,14 @@ import "@configs/env.ts";
 import { dynamoDBClient } from "@aws/dynamoDB/awsClient.ts";
 
 async function createTables() {
-    await createUsersTable();
-    await createEstablishmentTable();
-    await createProductsTable();
+    await Promise.all([
+        await createUsersTable(),
+        await createEstablishmentTable(),
+        await createProductsTable(),
+        await createEstablishmentRulesTable(),
+    ]);
+
+    console.log("Tables created successfully!");
 }
 
 async function createUsersTable() {
@@ -139,6 +144,56 @@ async function createProductsTable() {
             }
         } else {
             console.log("Error checking products table existence:", error);
+        }
+    }
+}
+
+async function createEstablishmentRulesTable() {
+    try {
+        await dynamoDBClient.send(new DescribeTableCommand({ TableName: "establishment_rules" }));
+        console.log("Table 'establishment_rules' already exists");
+        return;
+    } catch (error) {
+        if (error instanceof ResourceNotFoundException) {
+            const params: CreateTableCommandInput = {
+                TableName: "establishment_rules",
+                KeySchema: [
+                    { AttributeName: "id", KeyType: KeyType.HASH }
+                ],
+                AttributeDefinitions: [
+                    { AttributeName: "id", AttributeType: ScalarAttributeType.S },
+                    { AttributeName: "establishmentId", AttributeType: ScalarAttributeType.S }
+                ],
+                GlobalSecondaryIndexes: [
+                    {
+                        IndexName: "EstablishmentIdIndex",
+                        KeySchema: [
+                            { AttributeName: "establishmentId", KeyType: KeyType.HASH }
+                        ],
+                        Projection: {
+                            ProjectionType: ProjectionType.ALL
+                        },
+                        ProvisionedThroughput: {
+                            ReadCapacityUnits: 5,
+                            WriteCapacityUnits: 5
+                        }
+                    }
+                ],
+                ProvisionedThroughput: {
+                    ReadCapacityUnits: 5,
+                    WriteCapacityUnits: 5
+                },
+            };
+
+            try {
+                const command = new CreateTableCommand(params);
+                const response = await dynamoDBClient.send(command);
+                console.log("Establishment rules table created successfully:", response);
+            } catch (createError) {
+                console.log("Error creating establishment rules table:", createError);
+            }
+        } else {
+            console.log("Error checking establishment rules table existence:", error);
         }
     }
 }

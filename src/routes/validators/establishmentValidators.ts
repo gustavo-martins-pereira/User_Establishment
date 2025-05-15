@@ -1,4 +1,4 @@
-import { body, param, query } from "express-validator";
+import { body, param } from "express-validator";
 
 import { ESTABLISHMENT_TYPE } from "@models/establishment/establishment.ts";
 
@@ -9,10 +9,10 @@ const postCreateEstablishmentValidator = [
         .trim().notEmpty().withMessage("The name cannot be empty")
         .escape(),
     body("ownerId")
-        .exists().withMessage("The email is required")
-        .isString().withMessage("The email must be a string")
-        .trim().notEmpty().withMessage("The email cannot be empty")
-        .isUUID().withMessage("The owner must be a valid UUID")
+        .exists().withMessage("The ownerId is required")
+        .isString().withMessage("The ownerId must be a string")
+        .trim().notEmpty().withMessage("The ownerId cannot be empty")
+        .isUUID().withMessage("The ownerId must be a valid UUID")
         .escape(),
     body("type")
         .exists().withMessage("The establishment type is required")

@@ -7,6 +7,8 @@ import { deleteEstablishmentByIdValidator, getEstablishmentByIdValidator, getEst
 import { deleteProductByIdValidator, getProductByIdValidator, postCreateProductValidator, putUpdateProductValidator } from "./validators/productValidators.ts";
 import { createProduct, deleteProductById, getAllProducts, getProductById, updateProductById } from "@controllers/productController.ts";
 import { errorHandler } from "@middlewares/errorHandler.ts";
+import { deleteEstablishmentRuleByIdValidator, getEstablishmentRuleByEstablishmentIdValidator, postCreateEstablishmentRuleValidator, putUpdateEstablishmentRuleValidator } from "./validators/establishmentRuleValidators.ts";
+import { createEstablishmentRule, deleteEstablishmentRuleById, getEstablishmentRuleByEstablishmentId, updateEstablishmentRuleById } from "@controllers/establishmentRuleController.ts";
 
 const routes = express.Router();
 
@@ -32,6 +34,12 @@ routes.get("/products/:id", getProductByIdValidator, getProductById);
 routes.get("/products", getAllProducts);
 routes.put("/products/:id", putUpdateProductValidator, updateProductById);
 routes.delete("/products/:id", deleteProductByIdValidator, deleteProductById);
+
+// ESTABLISHMENT RULE
+routes.post("/establishment-rules", postCreateEstablishmentRuleValidator, createEstablishmentRule);
+routes.get("/establishment-rules/establishment/:id", getEstablishmentRuleByEstablishmentIdValidator, getEstablishmentRuleByEstablishmentId);
+routes.put("/establishment-rules/:id", putUpdateEstablishmentRuleValidator, updateEstablishmentRuleById);
+routes.delete("/establishment-rules/:id", deleteEstablishmentRuleByIdValidator, deleteEstablishmentRuleById);
 
 // ERROR MIDDLEWARES
 routes.use(errorHandler);
