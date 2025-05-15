@@ -4,8 +4,8 @@ import { createUser, getUserById, updateUserById, deleteUserById, getAllUsers } 
 import { postCreateUserValidator, getUserByIdValidator, putUpdateUserValidator, deleteUserByIdValidator } from "./validators/userValidators.ts";
 import { createEstablishment, deleteEstablishmentById, getAllEstablishments, getEstablishmentById, getEstablishmentsByType, updateEstablishmentById } from "@controllers/establishmentController.ts";
 import { deleteEstablishmentByIdValidator, getEstablishmentByIdValidator, getEstablishmentsByTypeValidator, postCreateEstablishmentValidator, putUpdateEstablishmentValidator } from "./validators/establishmentValidators.ts";
-import { getProductByIdValidator, postCreateProductValidator, putUpdateProductValidator } from "./validators/productValidators.ts";
-import { createProduct, getAllProducts, getProductById, updateProductById } from "@controllers/productController.ts";
+import { deleteProductByIdValidator, getProductByIdValidator, postCreateProductValidator, putUpdateProductValidator } from "./validators/productValidators.ts";
+import { createProduct, deleteProductById, getAllProducts, getProductById, updateProductById } from "@controllers/productController.ts";
 import { errorHandler } from "@middlewares/errorHandler.ts";
 
 const routes = express.Router();
@@ -31,6 +31,7 @@ routes.post("/products", postCreateProductValidator, createProduct);
 routes.get("/products/:id", getProductByIdValidator, getProductById);
 routes.get("/products", getAllProducts);
 routes.put("/products/:id", putUpdateProductValidator, updateProductById);
+routes.delete("/products/:id", deleteProductByIdValidator, deleteProductById);
 
 // ERROR MIDDLEWARES
 routes.use(errorHandler);

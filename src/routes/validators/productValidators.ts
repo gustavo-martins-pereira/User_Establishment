@@ -28,10 +28,10 @@ const getProductByIdValidator = [
 
 const putUpdateProductValidator = [
     param("id")
-        .exists().withMessage("The establishment ID is required")
-        .isString().withMessage("The establishment ID must be a string")
-        .trim().notEmpty().withMessage("The establishment ID cannot be empty")
-        .isUUID().withMessage("The establishment ID must be a valid UUID"),
+        .exists().withMessage("The product ID is required")
+        .isString().withMessage("The product ID must be a string")
+        .trim().notEmpty().withMessage("The product ID cannot be empty")
+        .isUUID().withMessage("The product ID must be a valid UUID"),
     body("name")
         .optional()
         .isString().withMessage("The name must be a string")
@@ -49,8 +49,17 @@ const putUpdateProductValidator = [
         .escape(),
 ];
 
+const deleteProductByIdValidator = [
+    param("id")
+        .exists().withMessage("The product ID is required")
+        .isString().withMessage("The product ID must be a string")
+        .trim().notEmpty().withMessage("The product ID cannot be empty")
+        .isUUID().withMessage("The product ID must be a valid UUID")
+];
+
 export {
     postCreateProductValidator,
     getProductByIdValidator,
-    putUpdateProductValidator
+    putUpdateProductValidator,
+    deleteProductByIdValidator,
 };

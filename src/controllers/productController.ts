@@ -9,6 +9,7 @@ import { getProductByIdUsecase } from "@services/product/getProductByIdUsecase.t
 import { getAllProductsUsecase } from "@services/product/getAllProductsUsecase.ts";
 import { getEstablishmentByIdUsecase } from "@services/establishment/getEstablishmentByIdUsecase.ts";
 import { updateProductByIdUsecase } from "@services/product/updateProductByIdUsecase.ts";
+import { deleteProductByIdUsecase } from "@services/product/deleteProductByIdUsecase.ts";
 
 async function createProduct(request: Request, response: Response, next: NextFunction) {
     try {
@@ -76,9 +77,28 @@ async function updateProductById(request: Request, response: Response, next: Nex
     }
 }
 
+async function deleteProductById(request: Request, response: Response, next: NextFunction) {
+    try {
+        const result = validationResult(request);
+        if(!result.isEmpty()) throw new BadRequestError(result.array()[0].msg);
+
+        const { id } = request.params;
+        const isProductExists = await getProductByIdUsecase(id as UUID);
+        
+        if(!isProductExists) throw new NotFoundError("Product not found");
+
+        await deleteProductByIdUsecase(id as UUID);
+
+        response.status(204).send();
+    } catch (error) {
+        next(error);
+    }
+}
+
 export {
     createProduct,
     getProductById,
     getAllProducts,
     updateProductById,
+    deleteProductById,
 };

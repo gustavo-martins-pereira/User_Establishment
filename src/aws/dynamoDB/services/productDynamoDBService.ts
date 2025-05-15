@@ -1,4 +1,4 @@
-import { GetCommand, GetCommandInput, PutCommand, PutCommandInput, ScanCommand, ScanCommandInput, UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, DeleteCommandInput, GetCommand, GetCommandInput, PutCommand, PutCommandInput, ScanCommand, ScanCommandInput, UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { randomUUID, UUID } from "node:crypto";
 
 import { CreateProductRequestDTO, UpdateProductByIdRequestDTO } from "@models/product/request/productRequestDTO.ts";
@@ -118,9 +118,26 @@ async function updateDynamoDBProductById(id: UUID, updateProductData: UpdateProd
     }
 }
 
+async function deleteDynamoDBProductById(id: UUID): Promise<void> {
+    const params: DeleteCommandInput = {
+        TableName: TABLE_NAME,
+        Key: {
+            id
+        }
+    };
+
+    try {
+        const command = new DeleteCommand(params);
+        await dynamoDBClient.send(command);
+    } catch (error) {
+        throw new InternalServerError("Failed to delete product from DynamoDB");
+    }
+}
+
 export {
     createDynamoDBProduct,
     getDynamoDBProductById,
     getDynamoDBAllProducts,
     updateDynamoDBProductById,
+    deleteDynamoDBProductById,
 };
