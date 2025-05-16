@@ -1,6 +1,6 @@
 import { UUID } from "node:crypto";
 
-import { createDynamoDBProduct, deleteDynamoDBProductById, getDynamoDBAllProducts, getDynamoDBProductById, updateDynamoDBProductById } from "@aws/dynamoDB/services/productDynamoDBService.ts";
+import { createDynamoDBProduct, deleteDynamoDBProductById, getDynamoDBAllProducts, getDynamoDBAllProductsByEstablishmentId, getDynamoDBProductById, updateDynamoDBProductById } from "@aws/dynamoDB/services/productDynamoDBService.ts";
 import { CreateProductRequestDTO, UpdateProductByIdRequestDTO } from "@models/product/request/productRequestDTO.ts";
 import { CreateProductResponseDTO, GetAllProductsResponseDTO, GetProductByIdResponseDTO, UpdateProductByIdResponseDTO } from "@models/product/response/productResponseDTO.ts";
 
@@ -16,6 +16,10 @@ async function getAllProducts(): Promise<GetAllProductsResponseDTO> {
     return await getDynamoDBAllProducts();
 }
 
+async function getAllProductsByEstablishmentId(establishmentId: UUID) {
+    return await getDynamoDBAllProductsByEstablishmentId(establishmentId);
+}
+
 async function updateProductById(id: UUID, productData: UpdateProductByIdRequestDTO): Promise<UpdateProductByIdResponseDTO> {
     return await updateDynamoDBProductById(id, productData);
 }
@@ -28,6 +32,7 @@ export {
     createProduct,
     getProductById,
     getAllProducts,
+    getAllProductsByEstablishmentId,
     updateProductById,
     deleteProductById,
 };

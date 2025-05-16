@@ -1,10 +1,11 @@
-import { DeleteCommand, DeleteCommandInput, GetCommand, GetCommandInput, PutCommand, PutCommandInput, ScanCommand, ScanCommandInput, UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, DeleteCommandInput, GetCommand, GetCommandInput, PutCommand, PutCommandInput, QueryCommand, QueryCommandInput, ScanCommand, ScanCommandInput, UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { randomUUID, UUID } from "node:crypto";
 
 import { CreateProductRequestDTO, UpdateProductByIdRequestDTO } from "@models/product/request/productRequestDTO.ts";
 import { CreateProductResponseDTO, GetAllProductsResponseDTO, GetProductByIdResponseDTO, UpdateProductByIdResponseDTO } from "@models/product/response/productResponseDTO.ts";
 import { dynamoDBClient } from "../awsClient.ts";
 import { InternalServerError, NotFoundError } from "@utils/errors/AppError.ts";
+import { Product } from "@models/product/product.ts";
 
 const TABLE_NAME = "products";
 
@@ -75,6 +76,26 @@ async function getDynamoDBAllProducts(): Promise<GetAllProductsResponseDTO> {
     }
 }
 
+async function getDynamoDBAllProductsByEstablishmentId(establishmentId: UUID): Promise<Product[]> {
+    const params: QueryCommandInput = {
+        TableName: TABLE_NAME,
+        IndexName: "EstablishmentIdIndex",
+        KeyConditionExpression: "establishmentId = :establishmentId",
+        ExpressionAttributeValues: {
+            ":establishmentId": establishmentId,
+        },
+    };
+
+    try {
+        const command = new QueryCommand(params);
+        const response = await dynamoDBClient.send(command);
+
+        return response.Items as Product[];
+    } catch (error) {
+        throw new InternalServerError("Failed to fetch all products by establishment ID from DynamoDB");
+    }
+}
+
 async function updateDynamoDBProductById(id: UUID, updateProductData: UpdateProductByIdRequestDTO): Promise<UpdateProductByIdResponseDTO> {
     const updateExpressions: string[] = [];
     const expressionAttributeNames: Record<string, string> = {};
@@ -105,7 +126,6 @@ async function updateDynamoDBProductById(id: UUID, updateProductData: UpdateProd
         const command = new UpdateCommand(params);
         const response = await dynamoDBClient.send(command);
 
-        // TODO: Make this validation in the controller
         if (!response.Attributes) throw new NotFoundError("Product not found");
 
         return response.Attributes as UpdateProductByIdResponseDTO;
@@ -138,6 +158,7 @@ export {
     createDynamoDBProduct,
     getDynamoDBProductById,
     getDynamoDBAllProducts,
+    getDynamoDBAllProductsByEstablishmentId,
     updateDynamoDBProductById,
     deleteDynamoDBProductById,
 };
