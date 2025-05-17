@@ -76,11 +76,13 @@ npm run dev
 ```
 /src
 ├── /aws
-│   └── dynamodb.ts
+│   └── /dynamodb
+├── /configs
 ├── /controllers
 │   └── establishmentController.ts
 ├── /middlewares
-│   └── auth.ts
+├── /models
+├── /repositories
 ├── /routes
 │   ├── /validators
 │   └── routes.ts
@@ -88,7 +90,7 @@ npm run dev
 │   └── /establishment
 ├── /utils
 │   ├── /configs
-│   ├── /enums
+│   ├── /handles
 │   └── /errors
 └── server.ts
 .env
@@ -100,12 +102,15 @@ readme.md
 ```
 
 O projeto segue um padrão de arquitetura limpa com clara separação de responsabilidades:
+- `aws`: Api para os serviços da AWS
+- `configs`: Configurações da aplicação
 - `controllers`: Manipulam requisições e respostas HTTP
+- `middlewares`: Middlewares para as rotas da aplicação
+- `models`: Modelo das entidades
+- `respositories`: Arquivos de comunicação com os bancos de dados ou serviços da aplicação (como a aws)
 - `services`: Contêm a lógica de negócios
 - `routes`: Definem os endpoints da API e manipuladores de rotas
-- `middlewares`: Lidam com preocupações transversais como autenticação
-- `utils`: Contém funções utilitárias e configurações
-- `aws`: Integrações com serviços AWS
+- `utils`: Contém funções utilitárias
 
 ## 🛣️ Rotas da API
 
